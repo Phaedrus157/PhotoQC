@@ -1,7 +1,11 @@
 {
   "name": "PhotoQC",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
-  "features": {},
+  "features": {
+    "ghcr.io/devcontainers/features/apt-get:1": {
+      "packages": "libgl1-mesa-glx"
+    }
+  },
   "customizations": {
     "vscode": {
       "settings": {},
@@ -10,7 +14,7 @@
       ]
     }
   },
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y libgl1-mesa-glx && pip3 install --upgrade pip && pip3 install -r requirements.txt",
+  "postCreateCommand": "pip3 install --upgrade pip && pip3 install -r requirements.txt",
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspaces/PhotoQC,type=bind"
   ],
