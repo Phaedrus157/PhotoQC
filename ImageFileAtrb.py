@@ -6,7 +6,8 @@ from PIL import Image
 
 def get_image_statistics(image_path):
     """
-    Retrieves and prints a comprehensive set of image statistics.
+    Retrieves and prints a comprehensive set of image statistics,
+    including an estimation of the original camera's megapixel count.
 
     Parameters:
         image_path (str): The path to the image file.
@@ -31,6 +32,18 @@ def get_image_statistics(image_path):
     # Get basic image attributes
     width, height = pil_image.size
     megapixels = (width * height) / 1000000.0
+
+    # Determine the original MP rating and apply the "HR" label if applicable
+    original_mp_label = "N/A"
+    if megapixels > 75 and megapixels < 85:
+        original_mp_label = "80MP HR"
+    elif megapixels > 45 and megapixels < 55:
+        original_mp_label = "50MP HR"
+    elif megapixels > 15 and megapixels < 25:
+        original_mp_label = "20MP"
+    else:
+        original_mp_label = "Other"
+
     file_size_kb = os.path.getsize(image_path) / 1024.0
     
     # Get color space and bit depth
@@ -63,6 +76,7 @@ def get_image_statistics(image_path):
     # Print the output in a single column
     sys.stdout.write(f"filenames = {os.path.basename(image_path)}\n")
     sys.stdout.write(f"pixel dimensions = {width}x{height}\n")
+    sys.stdout.write(f"original MP = {original_mp_label}\n")
     sys.stdout.write(f"filesizeKB = {file_size_kb:.2f}\n")
     sys.stdout.write(f"filesizeMP = {megapixels:.2f}\n")
     sys.stdout.write(f"bit depth = {bit_depth} bits\n")
