@@ -1,0 +1,9 @@
+# Use a Python 3.10 image as the base.
+# You can change the version as needed (e.g., 3.11 or 3.12).
+FROM python:3.10-slim
+
+# Copy the requirements file into the container.
+COPY requirements.txt .
+
+# Install all the packages from the requirements.txt file.
+RUN pip3 install --no-cache-dir -r requirements.txt

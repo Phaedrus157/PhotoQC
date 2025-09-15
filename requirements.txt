@@ -1,0 +1,8 @@
+numpy
+scipy
+Pillow
+opencv-python
+scikit-image
+matplotlib
+colour-science
+image-quality
