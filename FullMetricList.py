@@ -1,46 +1,134 @@
+import sys
+import os
 import cv2
 import numpy as np
+from PIL import Image
+from scipy.signal import convolve2d
 
-def calculate_laplacian_sharpness(image_path):
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if image is None:
-        raise FileNotFoundError(f"Image not found: {image_path}")
-    laplacian = cv2.Laplacian(image, cv2.CV_64F)
-    return laplacian.var()
+# Import all your individual routine functions
+from ImageFileAtrb import get_image_statistics
+from ColorToneAnalysis import analyze_tonal_distribution
+from NoiseAnalysis import analyze_noise
+from ChromaticAberration import analyze_chromatic_aberration
+from LensDistortion import analyze_lens_distortion
+from Vignetting import analyze_vignetting
+from CompressionArtifacts import analyze_compression_artifacts
+from ImageSharpness import analyze_sharpness
+from BrennerQC import calculate_brenner_sharpness
+from CannyECS import count_canny_edges
+# Corrected import for ColorfulMetric.py
+from ColorfulMetric import calculate_colorfulness
+from DynamRang import calculate_dynamic_range
+from FFTSharp import fft_sharpness_score
+from GabVarQC import gabor_variance
+from GradMetric import gradient_metric
+from LaplacianFilter import calculate_laplacian_metric
+from LaplacianSharp import analyze_laplacian_sharpness
+from LocalVar import local_variance_sharpness
+from NoiseGrain import calculate_noise_metric
+from NormAvGrad import normalized_average_gradient
+from SobelEIS import sobel_eis_sharpness
+from TenengradQC import tenengrad_focus_measure
+from WaveSharp import wavelet_sharpness_score
+from BlindDeconRL import run_blind_deconvolution
 
-def calculate_brenner_sharpness(image_path):
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if image is None:
-        raise FileNotFoundError(f"Image not found: {image_path}")
-    shifted = np.roll(image, -2, axis=0)
-    diff = image[:-2, :] - shifted[:-2, :]
-    return np.sum(diff ** 2)
+def run_all_analyses(image_path):
+    """
+    Executes all image quality analysis routines and prints a comprehensive report.
+    This version relies on each individual script to handle its own output.
+    """
+    if not os.path.exists(image_path):
+        print(f"❌ Error: The file '{image_path}' was not found.")
+        return
 
-def calculate_tenengrad_sharpness(image_path):
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if image is None:
-        raise FileNotFoundError(f"Image not found: {image_path}")
-    sobel_x = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
-    sobel_y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
-    magnitude = np.sqrt(sobel_x**2 + sobel_y**2)
-    return np.sum(magnitude**2)
+    print("--- Starting Full Image Quality Analysis ---")
 
-def calculate_gabor_variance(image_path, ksize=31, sigma=4.0, theta=0, lambd=10.0, gamma=0.5, psi=0):
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if image is None:
-        raise FileNotFoundError(f"Image not found: {image_path}")
-    gabor_kernel = cv2.getGaborKernel((ksize, ksize), sigma, theta, lambd, gamma, psi, ktype=cv2.CV_64F)
-    filtered = cv2.filter2D(image, cv2.CV_64F, gabor_kernel)
-    return np.var(filtered)
+    # --- 1. Image File Attributes ---
+    print("\n--- Image File Attributes ---")
+    print("Running get_image_statistics...")
+    get_image_statistics(image_path)
+
+    # --- 2. Sharpness and Focus ---
+    print("\n--- Sharpness and Focus ---")
+    print("Running analyze_sharpness (Laplacian Variance)...")
+    analyze_sharpness(image_path)
+    
+    print("\nRunning calculate_brenner_sharpness...")
+    calculate_brenner_sharpness(image_path)
+    
+    print("\nRunning count_canny_edges...")
+    count_canny_edges(image_path)
+
+    print("\nRunning fft_sharpness_score...")
+    fft_sharpness_score(image_path)
+    
+    print("\nRunning gabor_variance...")
+    gabor_variance(image_path)
+    
+    print("\nRunning tenengrad_focus_measure...")
+    tenengrad_focus_measure(image_path)
+    
+    print("\nRunning wavelet_sharpness_score...")
+    wavelet_sharpness_score(image_path)
+    
+    print("\nRunning gradient_metric...")
+    gradient_metric(image_path)
+    
+    print("\nRunning local_variance_sharpness...")
+    local_variance_sharpness(image_path)
+    
+    print("\nRunning normalized_average_gradient...")
+    normalized_average_gradient(image_path)
+    
+    print("\nRunning sobel_eis_sharpness...")
+    sobel_eis_sharpness(image_path)
+    
+    print("\nRunning LaplacianFilter...")
+    calculate_laplacian_metric(image_path)
+    
+    print("\nRunning LaplacianSharp...")
+    analyze_laplacian_sharpness(image_path)
+    
+    # --- 3. Color and Tonal Analysis ---
+    print("\n--- Color and Tonal Analysis ---")
+    print("Running analyze_tonal_distribution...")
+    analyze_tonal_distribution(image_path)
+    
+    print("\nRunning calculate_colorfulness...")
+    calculate_colorfulness(image_path)
+    
+    print("\nRunning calculate_dynamic_range...")
+    calculate_dynamic_range(image_path)
+
+    # --- 4. Noise and Grain ---
+    print("\n--- Noise and Grain ---")
+    print("Running analyze_noise...")
+    analyze_noise(image_path)
+    
+    print("\nRunning calculate_noise_metric...")
+    calculate_noise_metric(image_path)
+
+    print("\nRunning run_blind_deconvolution...")
+    run_blind_deconvolution(image_path)
+
+    # --- 5. Image Integrity and Artifacts ---
+    print("\n--- Image Integrity and Artifacts ---")
+    print("Running analyze_chromatic_aberration...")
+    analyze_chromatic_aberration(image_path)
+    
+    print("\nRunning analyze_compression_artifacts...")
+    analyze_compression_artifacts(image_path)
+    
+    # --- 6. Optical and Geometric Metrics ---
+    print("\n--- Optical and Geometric Metrics ---")
+    print("Running analyze_lens_distortion...")
+    analyze_lens_distortion(image_path)
+    
+    print("\nRunning analyze_vignetting...")
+    analyze_vignetting(image_path)
+
+    print("\n--- Full Analysis Complete ---")
 
 if __name__ == "__main__":
-    img_path = "/workspaces/PhotoQC/ImageQC/_9093103.jpg"
-    laplacian_value = calculate_laplacian_sharpness(img_path)
-    brenner_value = calculate_brenner_sharpness(img_path)
-    tenengrad_value = calculate_tenengrad_sharpness(img_path)
-    gabor_variance = calculate_gabor_variance(img_path)
-
-    print(f"Laplacian Value = {laplacian_value}")
-    print(f"Brenner Value = {brenner_value}")
-    print(f"Tenengrad Value = {tenengrad_value}")
-    print(f"Gabor Variance = {gabor_variance}")
+    image_file = os.path.join("QCImages", "QCRef.jpg")
+    run_all_analyses(image_file)
