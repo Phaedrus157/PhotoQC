@@ -41,7 +41,7 @@ def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
 # --- Main part of the script ---
 if __name__ == "__main__":
     folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
+    file_name = "QCRef.jpg"
     
     image_path = os.path.join(folder_name, file_name)
 
