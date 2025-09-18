@@ -1,66 +1,10 @@
 import cv2
 import numpy as np
-import os
-import piexif
 from PIL import Image
 import matplotlib.pyplot as plt
-
-def get_image_statistics(image_path):
-    print("\n=== 📷 Image Attribute Summary ===")
-    if not os.path.exists(image_path):
-        print(f"❌ Error: The image file was not found at {image_path}")
-        return
-
-    cv2_image = cv2.imread(image_path)
-    if cv2_image is None:
-        print("❌ Error: Could not load the image with OpenCV.")
-        return
-
-    try:
-        pil_image = Image.open(image_path)
-    except IOError as e:
-        print(f"❌ Error: Could not open the image with Pillow. {e}")
-        return
-
-    width, height = pil_image.size
-    megapixels = (width * height) / 1_000_000.0
-
-    if 75 < megapixels < 85:
-        original_mp_label = "80MP HR"
-    elif 45 < megapixels < 55:
-        original_mp_label = "50MP HR"
-    elif 15 < megapixels < 25:
-        original_mp_label = "20MP"
-    else:
-        original_mp_label = "Other"
-
-    file_size_kb = os.path.getsize(image_path) / 1024.0
-    color_space = pil_image.mode
-    bit_depth = 8 if 'L' in color_space else 24 if 'RGB' in color_space else "unknown"
-
-    try:
-        exif_dict = piexif.load(image_path)
-        camera_model = exif_dict.get("0th", {}).get(piexif.ImageIFD.Make)
-        if camera_model:
-            camera_model = camera_model.decode('utf-8')
-        exposure_time = exif_dict.get("Exif", {}).get(piexif.ExifIFD.ExposureTime)
-        if exposure_time and len(exposure_time) == 2:
-            exposure_time = f"{exposure_time[0]}/{exposure_time[1]} sec"
-        iso = exif_dict.get("Exif", {}).get(piexif.ExifIFD.ISOSpeedRatings)
-    except (KeyError, piexif.InvalidImageDataError, piexif.NoExifDataError):
-        camera_model = "N/A"
-        exposure_time = "N/A"
-        iso = "N/A"
-
-    print(f"Filename         : {os.path.basename(image_path)}")
-    print(f"Dimensions       : {width}x{height}")
-    print(f"Megapixels       : {megapixels:.2f} MP → {original_mp_label}")
-    print(f"File Size        : {file_size_kb:.2f} KB")
-    print(f"Bit Depth        : {bit_depth} bits")
-    print(f"Color Space      : {color_space}")
-    print(f"Camera Model     : {camera_model}")
-    print(f"Exposure Time    : {exposure_time}")
-    print(f"ISO              : {iso}")
+from colormath.color_conversions import convert_color
+from colormath.color_objects import sRGBColor, LabColor
+from colormath.color_diff import delta_e_cie2000
 
 def calculate_colorfulness_metric(image_path):
     print("\n=== 🎨 Colorfulness Metric ===")
@@ -115,8 +59,58 @@ def analyze_tonal_distribution(image_path):
     except Exception as e:
         print(f"❌ An error occurred: {e}")
 
+def analyze_color_accuracy_and_white_balance(image_path):
+    print("\n=== 🎯 Color Accuracy and White Balance Analysis ===")
+    try:
+        original_img = Image.open(image_path)
+        img_array = np.array(original_img).astype('float32')
+
+        r_avg = np.mean(img_array[:, :, 0])
+        g_avg = np.mean(img_array[:, :, 1])
+        b_avg = np.mean(img_array[:, :, 2])
+        gray_avg = (r_avg + g_avg + b_avg) / 3
+
+        r_gain = gray_avg / r_avg
+        g_gain = gray_avg / g_avg
+        b_gain = gray_avg / b_avg
+
+        wb_img_array = np.dstack([
+            img_array[:, :, 0] * r_gain,
+            img_array[:, :, 1] * g_gain,
+            img_array[:, :, 2] * b_gain
+        ])
+        wb_img_array = np.clip(wb_img_array, 0, 255).astype(np.uint8)
+        wb_img = Image.fromarray(wb_img_array)
+
+        width, height = original_img.size
+        combined_img = Image.new('RGB', (width * 2, height))
+        combined_img.paste(original_img, (0, 0))
+        combined_img.paste(wb_img, (width, 0))
+        combined_img.show(title="Original (Left) vs. White Balanced (Right)")
+        print("✅ White-balanced image preview generated. Please close the window to continue.")
+
+        original_avg_srgb = sRGBColor(r_avg / 255, g_avg / 255, b_avg / 255)
+        original_avg_lab = convert_color(original_avg_srgb, LabColor)
+        white_ref_lab = LabColor(lab_l=100.0, lab_a=0.0, lab_b=0.0)
+        delta_e = delta_e_cie2000(original_avg_lab, white_ref_lab)
+
+        print(f"Average RGB       : R:{r_avg:.2f}, G:{g_avg:.2f}, B:{b_avg:.2f}")
+        print(f"Delta E (CIEDE2000): {delta_e:.2f}")
+
+        if delta_e <= 1.0:
+            print("Conclusion: The color cast is not perceptible to the human eye. Excellent color accuracy.")
+        elif delta_e <= 2.0:
+            print("Conclusion: The color cast is perceptible with close observation. Very good color accuracy.")
+        else:
+            print("Conclusion: A significant color cast is present. Color accuracy is low.")
+
+    except FileNotFoundError:
+        print(f"❌ Error: The file '{image_path}' was not found.")
+    except Exception as e:
+        print(f"❌ An error occurred: {e}")
+
 if __name__ == "__main__":
     image_path = "QCImages/QCRef.jpg"
-    get_image_statistics(image_path)
     calculate_colorfulness_metric(image_path)
     analyze_tonal_distribution(image_path)
+    analyze_color_accuracy_and_white_balance(image_path)
