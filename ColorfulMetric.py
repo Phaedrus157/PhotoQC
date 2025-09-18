@@ -1,9 +1,3 @@
-# colorfulness_metric.py
-#
-# This script calculates the colorfulness of images based on the Hasler and Suesstrunk
-# metric. It analyzes the standard deviation of the color channels in the Lab color space
-# to provide a single numerical score. A higher score indicates a more colorful image.
-
 import cv2
 import numpy as np
 import os
@@ -27,8 +21,8 @@ def calculate_colorfulness_metric(image_path):
     if image is None:
         raise FileNotFoundError(f"Image not found at path: {image_path}")
 
-    # Split the BGR image into separate channels
-    (B, G, R) = cv2.split(image.astype("float"))
+    # Use float32 to reduce memory usage
+    (B, G, R) = cv2.split(image.astype("float32"))
 
     # Calculate the opponent color channels
     rg = R - G
@@ -46,10 +40,7 @@ def calculate_colorfulness_metric(image_path):
     return colorfulness
 
 if __name__ == "__main__":
-    # Define the directory where your images are located
     image_directory = "QCImages"
-    
-    # Get a list of all image files (jpg and png) in the specified directory
     image_files = glob.glob(os.path.join(image_directory, "*.jpg")) + glob.glob(os.path.join(image_directory, "*.png"))
     
     if not image_files:

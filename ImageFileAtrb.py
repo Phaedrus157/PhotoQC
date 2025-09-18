@@ -88,7 +88,7 @@ def get_image_statistics(image_path):
 # --- Main part of the script ---
 if __name__ == "__main__":
     folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
+    file_name = "QCRef.jpg"
     image_path = os.path.join(folder_name, file_name)
     
     get_image_statistics(image_path)
