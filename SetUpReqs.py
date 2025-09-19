@@ -1,9 +1,10 @@
 import subprocess
 import sys
 
-# List of required packages
+# Expanded list of required packages for ImageQC
 required_packages = [
-    "opencv-python",            # cv2
+    "opencv-python",            # cv2 for image processing
+    # "opencv-contrib-python",  # additional OpenCV modules (commented due to install issue)
     "numpy",                    # numerical operations
     "matplotlib",               # plotting
     "scipy",                    # FFT, filters
@@ -14,15 +15,20 @@ required_packages = [
     "ipython",                  # Jupyter/Colab support
     "jupyter",                  # Jupyter notebooks
     "notebook",                 # Jupyter notebook server
-    "seaborn",                  # optional: enhanced plotting
-    "pandas"                    # optional: tabular data/logging
+    "seaborn",                  # enhanced plotting
+    "pandas",                   # tabular data/logging
+    "imageio",                  # flexible image I/O
+    "tqdm",                     # progress bars
+    "pyyaml",                   # config file support
+    "loguru"                    # advanced logging
 ]
 
 def install_packages(packages):
     for package in packages:
+        print(f"📦 Installing: {package}")
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+    print("✅ All packages installed successfully.")
 
 if __name__ == "__main__":
-    print("Installing required packages for ImageQC...")
+    print("🔧 Starting installation of required packages for ImageQC...")
     install_packages(required_packages)
-    print("✅ All packages installed successfully.")
