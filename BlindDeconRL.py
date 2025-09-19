@@ -33,7 +33,7 @@ def calculate_brenner_sharpness(image_path):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    img_path = "/workspaces/PhotoQC/ImageQC/_9093103.jpg"
+    img_path = "/workspaces/PhotoQC/QCImages/QCRef.jpg"
 
     try:
         sharpness = calculate_brenner_sharpness(img_path)
