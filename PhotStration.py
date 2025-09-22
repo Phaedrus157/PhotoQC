@@ -17,10 +17,10 @@ Date: September 2025
 
 import cv2
 import numpy as np
-from PIL import Image, ImageFilter, ImageEnhance, ImageOps
+from PIL import Image
 import os
 import sys
-from pathlib import Path
+from typing import Optional
 
 # Import our dynamic image utility
 try:
@@ -37,8 +37,8 @@ class ArchitecturalRenderer:
     def __init__(self, image_path):
         """Initialize with image path"""
         self.image_path = image_path
-        self.original_image = None
-        self.cv_image = None
+        self.original_image: Optional[Image.Image] = None
+        self.cv_image: Optional[np.ndarray] = None
         self.layers = {}
         
     def load_image(self):
@@ -64,6 +64,9 @@ class ArchitecturalRenderer:
     
     def create_fine_line_drawing(self, line_detail=1.0, edge_threshold=50):
         """Create fine detailed line work like architectural drawings"""
+        if self.cv_image is None:
+            raise ValueError("No image loaded. Call load_image() first.")
+            
         # Convert to grayscale
         gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
         
@@ -90,6 +93,9 @@ class ArchitecturalRenderer:
     
     def create_structural_details(self, detail_threshold=100):
         """Create structural and architectural detail lines"""
+        if self.cv_image is None:
+            raise ValueError("No image loaded. Call load_image() first.")
+            
         # Convert to grayscale
         gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
         
@@ -132,6 +138,9 @@ class ArchitecturalRenderer:
     
     def create_depth_contours(self, contour_levels=5):
         """Create contour-like depth lines for architectural depth"""
+        if self.cv_image is None:
+            raise ValueError("No image loaded. Call load_image() first.")
+            
         # Convert to grayscale
         gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
         
@@ -160,6 +169,9 @@ class ArchitecturalRenderer:
     
     def create_hatching_texture(self, hatch_density=0.3):
         """Create architectural hatching/crosshatching for shading"""
+        if self.cv_image is None:
+            raise ValueError("No image loaded. Call load_image() first.")
+            
         # Convert to grayscale for shadow analysis
         gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
         
@@ -200,6 +212,10 @@ class ArchitecturalRenderer:
         # Start with white background
         if 'fine_lines' not in self.layers:
             print("Missing fine_lines layer!")
+            return None
+        
+        if self.original_image is None:
+            print("No original image loaded!")
             return None
             
         # Create base white image

@@ -15,10 +15,10 @@ Date: September 2025
 
 import cv2
 import numpy as np
-from PIL import Image, ImageFilter, ImageEnhance
+from PIL import Image
 import os
 import sys
-from pathlib import Path
+from typing import Optional
 
 # Import our dynamic image utility
 try:
@@ -45,7 +45,8 @@ class PosterRenderer:
     def __init__(self, image_path):
         """Initialize with image path"""
         self.image_path = image_path
-        self.original_image = None
+        self.original_image: Optional[Image.Image] = None
+        self.cv_image: Optional[np.ndarray] = None
         self.layers = {}
         
     def load_image(self):
@@ -71,6 +72,9 @@ class PosterRenderer:
     
     def create_bold_outlines(self, line_thickness=3, blur_strength=7):
         """Create bold black outlines for comic book style"""
+        if self.cv_image is None:
+            raise ValueError("No image loaded. Call load_image() first.")
+            
         # Convert to grayscale
         gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
         
@@ -90,6 +94,9 @@ class PosterRenderer:
     
     def create_cartoon_colors(self, color_levels=8, blur_strength=15):
         """Create flat, posterized colors like cartoons/comics"""
+        if self.original_image is None:
+            raise ValueError("No image loaded. Call load_image() first.")
+            
         # Convert PIL to OpenCV format
         cv_image = cv2.cvtColor(np.array(self.original_image), cv2.COLOR_RGB2BGR)
         
@@ -104,11 +111,11 @@ class PosterRenderer:
         
         # Use k-means to reduce colors (posterize)
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        _, labels, centers = cv2.kmeans(data, color_levels, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        _, labels, centers = cv2.kmeans(data, color_levels, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)  # type: ignore
         
         # Convert back to uint8 and reshape
         centers = np.uint8(centers)
-        posterized_data = centers[labels.flatten()]
+        posterized_data = centers[labels.flatten()]  # type: ignore
         posterized_image = posterized_data.reshape(cv_image.shape)
         
         # Convert back to PIL RGB
