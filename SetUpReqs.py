@@ -15,7 +15,8 @@ required_packages = [
     "jupyter",                  # Jupyter notebooks
     "notebook",                 # Jupyter notebook server
     "seaborn",                  # optional: enhanced plotting
-    "pandas"                    # optional: tabular data/logging
+    "pandas",                   # optional: tabular data/logging
+    "psd-tools"                 # PSD file creation and manipulation
 ]
 
 # Aliases for packages with different PyPI names
