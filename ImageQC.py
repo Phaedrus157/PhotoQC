@@ -6,11 +6,14 @@ import numpy as np
 from PIL import Image
 from scipy import fftpack, ndimage
 from skimage import filters
+from image_utils import get_qc_image_path
 
 # --- Image Path ---
-folder_name = "QCImages"
-file_name = "QCRef.jpg"
-image_path = os.path.join(folder_name, file_name)
+try:
+    image_path = get_qc_image_path()
+except (FileNotFoundError, ValueError) as e:
+    print(f"Error loading image: {e}")
+    sys.exit(1)
 
 # --- Image Statistics ---
 def get_image_statistics(image_path):

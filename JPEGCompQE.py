@@ -2,6 +2,7 @@
 
 import os
 from PIL import Image
+from image_utils import get_qc_image_path
 
 def estimate_jpeg_quality(image_path):
     try:
@@ -23,5 +24,9 @@ def estimate_jpeg_quality(image_path):
         return None
 
 if __name__ == "__main__":
-    image_file = os.path.join(os.getcwd(), "QCImages", "QCRef.jpg")
-    estimate_jpeg_quality(image_file)
+    try:
+        image_file = get_qc_image_path()
+        estimate_jpeg_quality(image_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

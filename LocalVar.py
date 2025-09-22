@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+from image_utils import get_qc_image_path
 
 def compute_local_variance(image_path, window_size=7):
     """
@@ -38,7 +39,7 @@ def compute_local_variance(image_path, window_size=7):
 if __name__ == "__main__":
     # Define the image path relative to the script's location
     # The folder name has been changed from 'QCImageRef' to 'QCImages'
-    image_path = os.path.join("QCImages", "QCRef2.jpg")
+    image_path = get_qc_image_path()
     try:
         score = compute_local_variance(image_path)
         print(f"Local Variance Score for QCRef2.jpg: {score:.2f}")

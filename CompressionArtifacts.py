@@ -2,6 +2,7 @@ import sys
 from PIL import Image
 import numpy as np
 from scipy.signal import convolve2d
+from image_utils import get_qc_image_path
 
 def analyze_compression_artifacts(image_path):
     """
@@ -57,6 +58,9 @@ def analyze_compression_artifacts(image_path):
         print(f"❌ An error occurred: {e}")
 
 if __name__ == "__main__":
-    # Define the fixed image path
-    image_file = "QCImages/QCRef.jpg"
-    analyze_compression_artifacts(image_file)
+    try:
+        # Define the fixed image path
+        image_file = get_qc_image_path()
+        analyze_compression_artifacts(image_file)    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

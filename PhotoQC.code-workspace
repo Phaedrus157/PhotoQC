@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "security.workspace.trust.enabled": false,
+        "security.workspace.trust.startupPrompt": "never",
+        "security.workspace.trust.banner": "never",
+        "security.workspace.trust.emptyWindow": false,
+        "task.allowAutomaticTasks": "on"
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.black-formatter",
+            "ms-python.pylint",
+            "ms-vscode.powershell",
+            "tomoki1207.pdf"
+        ]
+    }
+}

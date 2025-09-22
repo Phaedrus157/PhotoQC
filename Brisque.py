@@ -2,6 +2,7 @@ import os
 import numpy as np
 from PIL import Image
 from brisque import BRISQUE
+from image_utils import get_qc_image_path
 
 def calculate_brisque_score(image_path):
     """
@@ -35,8 +36,12 @@ def calculate_brisque_score(image_path):
         return None
 
 if __name__ == "__main__":
-    # Define path to the image to be evaluated
-    image_file = os.path.join(os.getcwd(), "QCImages", "QCRef.jpg")
-
-    # Run BRISQUE score calculation
-    calculate_brisque_score(image_file)
+    try:
+        # Get path to the QC image automatically
+        image_file = get_qc_image_path()
+        
+        # Run BRISQUE score calculation
+        calculate_brisque_score(image_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

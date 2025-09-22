@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from skimage import restoration
 import os
+from image_utils import get_qc_image_path
 
 def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
     """
@@ -44,7 +45,7 @@ def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
 # --- Main part of the script ---
 if __name__ == "__main__":
     folder_name = "QCImages"
-    file_name = "QCRef.jpg"
+    image_path = get_qc_image_path()
     
     image_path = os.path.join("/workspaces/PhotoQC", folder_name, file_name)
 

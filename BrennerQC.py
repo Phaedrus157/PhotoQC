@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+from image_utils import get_qc_image_path
 
 def calculate_brenner_sharpness(image_path):
     """
@@ -33,9 +34,9 @@ def calculate_brenner_sharpness(image_path):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    img_path = "/workspaces/PhotoQC/QCImages/QCRef.jpg"
-
     try:
+        img_path = get_qc_image_path()
+        
         sharpness = calculate_brenner_sharpness(img_path)
         print(f"📏 Brenner Sharpness Metric for {os.path.basename(img_path)}: {sharpness:.2f}")
 
@@ -46,6 +47,7 @@ if __name__ == "__main__":
         print("- This metric is relative; compare across images for best results.")
 
     except (FileNotFoundError, ValueError) as e:
-        print(e)
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

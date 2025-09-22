@@ -1,4 +1,5 @@
 import os
+from image_utils import get_qc_image_path
 
 # Define the relative path from the current working directory
 target_folder = "QCImages"

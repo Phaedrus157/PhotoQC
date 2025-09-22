@@ -1,6 +1,7 @@
 import sys
 import cv2
 import numpy as np
+from image_utils import get_qc_image_path
 from PIL import Image
 
 def analyze_sharpness(image_path: str):
@@ -43,6 +44,10 @@ def analyze_sharpness(image_path: str):
         print(f"❌ An error occurred: {e}")
 
 if __name__ == "__main__":
-    # Define the fixed image path
-    image_file = "QCImages/QCRef.jpg"
-    analyze_sharpness(image_file)
+    try:
+        # Get the QC image path dynamically
+        image_file = get_qc_image_path()
+        analyze_sharpness(image_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

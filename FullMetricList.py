@@ -11,6 +11,7 @@ import piexif
 from colormath.color_conversions import convert_color
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie2000
+from image_utils import get_qc_image_path
 
 # --- Image Statistics ---
 def get_image_statistics(image_path):
@@ -285,5 +286,9 @@ def run_all_analyses(image_path):
 
 # --- Entry Point ---
 if __name__ == "__main__":
-    image_file = os.path.join(os.getcwd(), "QCImages", "QCRef.jpg")
-    run_all_analyses(image_file)
+    try:
+        image_file = get_qc_image_path()
+        run_all_analyses(image_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

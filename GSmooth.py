@@ -1,5 +1,6 @@
 import cv2
 import os
+from image_utils import get_qc_image_path
 
 def apply_gaussian_smoothing(image_path, output_path, kernel_size=(3, 3), sigma=0):
     """
@@ -23,10 +24,14 @@ def apply_gaussian_smoothing(image_path, output_path, kernel_size=(3, 3), sigma=
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    folder_name = "QCImages"
-    file_name = "QCRef.jpg"
-    image_path = os.path.join(folder_name, file_name)
-    output_file_name = "QCRef_smoothed.jpg"
-    output_path = os.path.join(folder_name, output_file_name)
+    try:
+        folder_name = "QCImages"
+        image_path = get_qc_image_path()
+        image_path = os.path.join(folder_name, file_name)
+        output_file_name = "QCRef_smoothed.jpg"
+        output_path = os.path.join(folder_name, output_file_name)
 
-    apply_gaussian_smoothing(image_path, output_path)
+        apply_gaussian_smoothing(image_path, output_path)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

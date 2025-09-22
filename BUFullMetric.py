@@ -31,6 +31,7 @@ from SobelEIS import sobel_eis_sharpness
 from TenengradQC import tenengrad_focus_measure
 from WaveSharp import wavelet_sharpness_score
 from BlindDeconRL import run_blind_deconvolution
+from image_utils import get_qc_image_path
 
 def run_all_analyses(image_path):
     """
@@ -130,5 +131,8 @@ def run_all_analyses(image_path):
     print("\n--- Full Analysis Complete ---")
 
 if __name__ == "__main__":
-    image_file = os.path.join("QCImages", "QCRef.jpg")
-    run_all_analyses(image_file)
+    try:
+        image_file = os.path.join("QCImages", "QCRef.jpg")
+        run_all_analyses(image_file)    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

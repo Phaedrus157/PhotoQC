@@ -1,0 +1,16 @@
+# PhotoQC Test Image Placeholder
+# 
+# This file represents where you should place your actual test image.
+# The PhotoQC scripts will now automatically detect any image file you place in this folder.
+#
+# Supported formats (in order of preference for quality analysis):
+# 1. TIFF (.tif, .tiff) - RECOMMENDED for best quality analysis
+# 2. PNG (.png) - Lossless, good alternative  
+# 3. JPEG (.jpg, .jpeg) - Acceptable but may show compression artifacts
+#
+# To test the PhotoQC scripts:
+# 1. Remove this placeholder file
+# 2. Add your test image to the QCImages folder
+# 3. Run any PhotoQC analysis script
+#
+# The scripts will automatically find and analyze your image!

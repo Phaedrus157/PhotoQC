@@ -1,0 +1,88 @@
+# PhotoQC Git Configuration
+# Optimized .gitignore for Python image processing projects
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# === Virtual Environments ===
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# === IDE ===
+.vscode/settings.json.bak
+*.swp
+*.swo
+*~
+
+# === Image Processing ===
+# Large test images
+*.tif
+*.tiff
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.gif
+*.webp
+# But keep small reference images
+!QCImages/sample_*.jpg
+!QCImages/test_*.png
+!documentation/images/*.png
+
+# === Analysis Output ===
+output/
+results/
+analysis_results/
+*.csv
+*.json
+*_output.txt
+*_results.txt
+
+# === Temporary Files ===
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# === OS ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# === PhotoQC Specific ===
+# Keep configuration but not generated files
+requirements_generated.txt
+*_backup.py
+*.log

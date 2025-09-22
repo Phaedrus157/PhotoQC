@@ -1,5 +1,6 @@
 import cv2
 import os
+from image_utils import get_qc_image_path
 
 def calculate_laplacian_sharpness(image_path, kernel_size=(5, 5), sigma=0):
     """
@@ -33,7 +34,7 @@ def calculate_laplacian_sharpness(image_path, kernel_size=(5, 5), sigma=0):
 # --- Main part of the script ---
 if __name__ == "__main__":
     folder_name = "QCImages"
-    file_name = "QCRef.jpg"
+    image_path = get_qc_image_path()
     image_path = os.path.join(folder_name, file_name)
 
     try:

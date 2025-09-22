@@ -3,6 +3,7 @@ import torch
 import pyiqa
 from PIL import Image
 from torchvision import transforms
+from image_utils import get_qc_image_path
 
 def calculate_niqe_score(image_path):
     try:
@@ -21,5 +22,9 @@ def calculate_niqe_score(image_path):
         return None
 
 if __name__ == "__main__":
-    image_file = os.path.join(os.getcwd(), "QCImages", "QCRef.jpg")
-    calculate_niqe_score(image_file)
+    try:
+        image_file = get_qc_image_path()
+        calculate_niqe_score(image_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

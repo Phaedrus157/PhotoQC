@@ -3,6 +3,7 @@
 import os
 import cv2
 import numpy as np
+from image_utils import get_qc_image_path
 
 def detect_color_cast(image_path):
     image = cv2.imread(image_path)
@@ -20,5 +21,9 @@ def detect_color_cast(image_path):
     return cast_strength
 
 if __name__ == "__main__":
-    image_file = os.path.join(os.getcwd(), "QCImages", "QCRef.jpg")
-    detect_color_cast(image_file)
+    try:
+        image_file = get_qc_image_path()
+        detect_color_cast(image_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

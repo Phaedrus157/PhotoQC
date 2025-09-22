@@ -4,6 +4,7 @@ import os
 import cv2
 from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import peak_signal_noise_ratio as psnr
+from image_utils import get_qc_image_path
 
 def compare_with_reference(image_path, reference_path):
     img1 = cv2.imread(image_path)
@@ -23,6 +24,10 @@ def compare_with_reference(image_path, reference_path):
     return ssim_score, psnr_score
 
 if __name__ == "__main__":
-    image_file = os.path.join(os.getcwd(), "QCImages", "QCRef.jpg")
-    reference_file = os.path.join(os.getcwd(), "QCImages", "QCRef_GT.jpg")
-    compare_with_reference(image_file, reference_file)
+    try:
+        image_file = get_qc_image_path()
+        reference_file = os.path.join(os.getcwd(), "QCImages", "QCRef_GT.jpg")
+        compare_with_reference(image_file, reference_file)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

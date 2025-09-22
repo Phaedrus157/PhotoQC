@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from colormath.color_conversions import convert_color
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie2000
+from image_utils import get_qc_image_path
 
 def calculate_colorfulness_metric(image_path):
     print("\n=== 🎨 Colorfulness Metric ===")
@@ -110,7 +111,11 @@ def analyze_color_accuracy_and_white_balance(image_path):
         print(f"❌ An error occurred: {e}")
 
 if __name__ == "__main__":
-    image_path = "QCImages/QCRef.jpg"
-    calculate_colorfulness_metric(image_path)
-    analyze_tonal_distribution(image_path)
-    analyze_color_accuracy_and_white_balance(image_path)
+    try:
+        image_path = get_qc_image_path()
+        calculate_colorfulness_metric(image_path)
+        analyze_tonal_distribution(image_path)
+        analyze_color_accuracy_and_white_balance(image_path)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")

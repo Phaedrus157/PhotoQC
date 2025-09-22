@@ -3,6 +3,7 @@ import os
 import sys
 import piexif
 from PIL import Image
+from image_utils import get_qc_image_path
 
 def get_image_statistics(image_path):
     """
@@ -87,8 +88,12 @@ def get_image_statistics(image_path):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    folder_name = "QCImages"
-    file_name = "QCRef.jpg"
-    image_path = os.path.join(folder_name, file_name)
+    try:
+        folder_name = "QCImages"
+        image_path = get_qc_image_path()
+        image_path = os.path.join(folder_name, file_name)
     
-    get_image_statistics(image_path)
+        get_image_statistics(image_path)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}")
+        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")
