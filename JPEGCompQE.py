@@ -1,6 +1,5 @@
 # jpeg_quality_estimator.py
 
-import os
 from PIL import Image
 from image_utils import get_qc_image_path
 

@@ -49,7 +49,7 @@ def calculate_fft_sharpness(image_path):
     cv2.circle(high_freq_mask, (center_col, center_row), mask_size, 0, -1)
 
     # Extract magnitudes for low and high frequencies
-    low_freq_energy = np.sum(magnitude_spectrum[low_freq_mask > 0])
+    np.sum(magnitude_spectrum[low_freq_mask > 0])
     high_freq_energy = np.sum(magnitude_spectrum[high_freq_mask > 0])
 
     # Calculate the total energy

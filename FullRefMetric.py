@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import os
 import sys
-from image_utils import get_qc_image_path
 
 def calculate_laplacian_sharpness(image_path):
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)

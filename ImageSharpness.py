@@ -1,8 +1,5 @@
-import sys
 import cv2
-import numpy as np
 from image_utils import get_qc_image_path
-from PIL import Image
 
 def analyze_sharpness(image_path: str):
     """

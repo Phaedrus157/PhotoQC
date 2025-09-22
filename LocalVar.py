@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import os
 from image_utils import get_qc_image_path
 
 def compute_local_variance(image_path, window_size=7):

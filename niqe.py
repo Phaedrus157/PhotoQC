@@ -1,5 +1,3 @@
-import os
-import torch
 import pyiqa
 from PIL import Image
 from torchvision import transforms

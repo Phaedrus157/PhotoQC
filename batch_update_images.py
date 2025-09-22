@@ -6,7 +6,6 @@ across all PhotoQC scripts.
 
 import os
 import re
-import glob
 
 # List of files that need updating based on our grep search
 files_to_update = [

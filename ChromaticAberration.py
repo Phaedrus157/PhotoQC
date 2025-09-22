@@ -1,7 +1,5 @@
-import sys
 import cv2
 import numpy as np
-from PIL import Image
 from image_utils import get_qc_image_path
 
 def analyze_chromatic_aberration(image_path):
@@ -31,7 +29,7 @@ def analyze_chromatic_aberration(image_path):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Detect edges using Canny to focus on high-contrast areas
-        edges = cv2.Canny(gray, 100, 200)
+        cv2.Canny(gray, 100, 200)
 
         # Split image into Blue, Green, Red channels
         b, g, r = cv2.split(img)

@@ -4,10 +4,7 @@ PhotoQC Auto-Validator
 Automatically validates all PhotoQC scripts for import issues, syntax errors, and compatibility.
 """
 
-import os
-import sys
 import ast
-import subprocess
 import importlib.util
 from pathlib import Path
 

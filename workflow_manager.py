@@ -4,7 +4,6 @@ PhotoQC Workflow Manager
 Automates common development workflows and change management.
 """
 
-import os
 import subprocess
 import sys
 from datetime import datetime

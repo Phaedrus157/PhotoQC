@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 
 def calculate_laplacian_sharpness(image_path):
     # Load image in grayscale

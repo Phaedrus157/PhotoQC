@@ -29,8 +29,6 @@ except ImportError:
 
 # Try to import PSD creation library
 try:
-    from psd_tools import PSDImage
-    from psd_tools.api.layers import PixelLayer
     PSD_AVAILABLE = True
 except ImportError:
     PSD_AVAILABLE = False
@@ -180,8 +178,6 @@ class PosterRenderer:
                 return self.save_as_layered_tiff(output_path.replace('.psd', '.tiff'))
             
             # Create PSD with layers
-            from psd_tools import PSDImage
-            from psd_tools.api.layers import PixelLayer
             
             # This is a simplified approach - for full PSD creation,
             # we'll use the photoshop-python library alternative

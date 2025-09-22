@@ -1,6 +1,5 @@
 # color_cast_detector.py
 
-import os
 import cv2
 import numpy as np
 from image_utils import get_qc_image_path
