@@ -54,7 +54,7 @@ def analyze_vignetting(image_path):
 
         print(f"Center Brightness: {center_brightness:.2f}")
         print(f"Corners Brightness: {corners_brightness:.2f}")
-        print(f"💡 Vignetting Score (Light Falloff): {vignetting_score:.2f}%")
+        print(f"[TIP] Vignetting Score (Light Falloff): {vignetting_score:.2f}%")
         
         # Interpretation of the score
         if vignetting_score > 5:

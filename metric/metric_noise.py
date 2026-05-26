@@ -30,7 +30,7 @@ def analyze_noise(image_path: str):
         # Calculate the variance as a metric for overall noise
         overall_noise_metric = np.var(laplacian_image)
         
-        print(f"📈 Overall Noise Metric (Laplacian Variance): {overall_noise_metric:.2f}")
+        print(f"[CHART] Overall Noise Metric (Laplacian Variance): {overall_noise_metric:.2f}")
 
         # --- Advanced Noise Analysis (Luminance vs. Chrominance) ---
         print("\n--- Advanced Noise Analysis ---")
@@ -57,8 +57,8 @@ def analyze_noise(image_path: str):
         # Combined chrominance noise score
         chroma_noise = (cb_noise + cr_noise) / 2
         
-        print(f"📊 Luminance Noise (Y-channel): {y_noise:.2f}")
-        print(f"🎨 Chrominance Noise (Cb/Cr-channels): {chroma_noise:.2f}")
+        print(f"[STATS] Luminance Noise (Y-channel): {y_noise:.2f}")
+        print(f"[COLOR] Chrominance Noise (Cb/Cr-channels): {chroma_noise:.2f}")
 
         # Final Conclusion
         print("\n--- Analysis Conclusion ---")

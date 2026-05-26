@@ -41,8 +41,8 @@ def analyze_tonal_distribution(image_path):
         highlight_percent = (highlight_pixels / total_pixels) * 100
 
         print("\n--- Tonal Analysis Summary ---")
-        print(f"🌑 Clipped Shadows: {shadow_percent:.2f}% of pixels are pure black (value 0).")
-        print(f"☀️ Clipped Highlights: {highlight_percent:.2f}% of pixels are pure white (value 255).")
+        print(f"[SHADOWS] Clipped Shadows: {shadow_percent:.2f}% of pixels are pure black (value 0).")
+        print(f"[HIGHLIGHTS] Clipped Highlights: {highlight_percent:.2f}% of pixels are pure white (value 255).")
         
         # Plot the histogram
         plt.figure(figsize=(10, 6))
