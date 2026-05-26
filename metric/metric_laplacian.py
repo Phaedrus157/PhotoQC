@@ -1,5 +1,6 @@
 import cv2
 import os
+import sys
 
 def calculate_laplacian_sharpness(image_path):
     """
@@ -7,6 +8,11 @@ def calculate_laplacian_sharpness(image_path):
 
     A higher variance value indicates a sharper image with more detail.
     A lower variance value indicates a blurrier image.
+
+    Threshold interpretation:
+        score < 100:       Blurry — likely reject
+        score 100 to 300:  Acceptable — review carefully
+        score > 300:       Sharp — likely accept
 
     Parameters:
         image_path (str): The full path to the image file.
@@ -31,18 +37,23 @@ def calculate_laplacian_sharpness(image_path):
 
     return laplacian_var
 
-# --- Main part of the script ---
 if __name__ == "__main__":
-    # Define the image file name and its folder
-    folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
-    
-    # Construct the full image path
-    image_path = os.path.join(folder_name, file_name)
+    if len(sys.argv) < 2:
+        print("Usage: py metric_laplacian.py <image_path>")
+        sys.exit(1)
+
+    image_path = sys.argv[1]
 
     try:
         sharpness_score = calculate_laplacian_sharpness(image_path)
-        print(f"The Laplacian sharpness score for {file_name} is: {sharpness_score:.2f}")
+        print(f"Laplacian sharpness score for {os.path.basename(image_path)}: {sharpness_score:.2f}")
+
+        if sharpness_score < 100:
+            print("Interpretation: Blurry — likely reject")
+        elif sharpness_score <= 300:
+            print("Interpretation: Acceptable — review carefully")
+        else:
+            print("Interpretation: Sharp — likely accept")
 
     except (FileNotFoundError, ValueError) as e:
         print(e)

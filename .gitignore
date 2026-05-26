@@ -86,3 +86,4 @@ Thumbs.db
 requirements_generated.txt
 *_backup.py
 *.log
+QCImages/

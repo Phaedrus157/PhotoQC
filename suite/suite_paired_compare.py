@@ -1,35 +1,34 @@
 """
-iwrs_qc_compare.py
-──────────────────────────────────────────────────────────────────────────────
-Paired QC comparison: LRC-only TIFFs (old) vs CFA-DNG → SEP TIFFs (new)
-Iceland 1985 / IWRS project
+suite_paired_compare.py
+Paired QC comparison suite. Matches image files between two folders by
+numeric filename prefix and reports averaged metrics across all matched pairs.
 
 Metrics (averaged across all matched pairs):
-  1. P97-P3 tonal spread + shadow/highlight clipping %
-  2. RMS Tenengrad  (edge sharpness, normalized)
-  3. RMS Laplacian  (microcontrast / structure, normalized)
+  1. Tonal spread (P97-P3) + shadow/highlight clipping %
+  2. RMS Tenengrad sharpness (normalized by pixel count)
+  3. RMS Laplacian microcontrast (normalized by pixel count)
 
 Output: averaged console summary + CSV log
 
-Fix 2026-04-11: OpenCV 4.12.0 AVX2 rejects float32->CV_64F for Sobel/Laplacian.
-  Use uint8 input to filter functions instead.
+Usage: py suite_paired_compare.py <folder1> <folder2>
+
+Note: OpenCV 4.12.0 AVX2 rejects float32->CV_64F for Sobel/Laplacian;
+uint8 input is used for those filter calls.
 """
 
 import cv2
 import numpy as np
 import os
+import sys
 import csv
 from datetime import datetime
 from pathlib import Path
 
-# Paths
-OLD_DIR = r"C:\Users\jaa15\OneDrive\Pictures\#LRC_DEV\ICELAND\WhaleMuseumTiff"
-NEW_DIR = r"C:\Users\jaa15\OneDrive\Pictures\#LRC_DEV\ICELAND\IWRS"
-LOG_DIR = r"C:\Users\jaa15\OneDrive\PYProjects\Logs"
+LOG_DIR = r"C:\Users\Public\Documents\PYProjects\Logs"
 
 
 def load_gray_float(path: str) -> np.ndarray:
-    """Load TIFF grayscale. IMREAD_ANYDEPTH prevents silent 16->8 downcast."""
+    """Load image as grayscale float. IMREAD_ANYDEPTH prevents silent 16->8 downcast."""
     img = cv2.imread(path, cv2.IMREAD_ANYDEPTH | cv2.IMREAD_GRAYSCALE)
     if img is None:
         raise IOError(f"Cannot load: {path}")
@@ -47,8 +46,7 @@ def tonal_metrics(img: np.ndarray) -> tuple:
 
 
 def rms_tenengrad(img: np.ndarray) -> float:
-    """RMS Tenengrad - Sobel edge sharpness, normalized by pixel count.
-    uint8 input required -- OpenCV 4.12.0 AVX2 rejects float32->CV_64F."""
+    """RMS Tenengrad sharpness, normalized by pixel count."""
     s  = (img * 255.0).clip(0, 255).astype(np.uint8)
     sx = cv2.Sobel(s, cv2.CV_64F, 1, 0, ksize=3)
     sy = cv2.Sobel(s, cv2.CV_64F, 0, 1, ksize=3)
@@ -56,8 +54,7 @@ def rms_tenengrad(img: np.ndarray) -> float:
 
 
 def rms_laplacian(img: np.ndarray) -> float:
-    """RMS Laplacian - second-order gradient, normalized by pixel count.
-    uint8 input required -- OpenCV 4.12.0 AVX2 rejects float32->CV_64F."""
+    """RMS Laplacian microcontrast, normalized by pixel count."""
     s = (img * 255.0).clip(0, 255).astype(np.uint8)
     return float(np.sqrt(np.mean(cv2.Laplacian(s, cv2.CV_64F) ** 2)))
 
@@ -78,35 +75,41 @@ def numeric_prefix(stem: str) -> str:
     return stem.split("_")[0]
 
 
-def build_index(folder: str, strip_suffix: str = "") -> dict:
-    """Returns {numeric_prefix: Path} for all *.tif in folder root only."""
+def build_index(folder: str) -> dict:
+    """Returns {numeric_prefix: Path} for all *.tif files in folder root."""
     index = {}
     for f in Path(folder).glob("*.tif"):
-        stem = f.stem
-        if strip_suffix and stem.endswith(strip_suffix):
-            stem = stem[: -len(strip_suffix)]
-        num = numeric_prefix(stem)
+        num = numeric_prefix(f.stem)
         index[num] = f
     return index
 
 
 def main():
+    if len(sys.argv) < 3:
+        print("Usage: py suite_paired_compare.py <folder1> <folder2>")
+        sys.exit(1)
+
+    folder1 = sys.argv[1]
+    folder2 = sys.argv[2]
+
     print("=" * 62)
-    print("  IWRS QC Comparison  —  LRC-only vs CFA-DNG + SEP")
+    print("  Paired QC Comparison")
     print("=" * 62)
 
-    old_idx = build_index(OLD_DIR, strip_suffix="")
-    new_idx = build_index(NEW_DIR, strip_suffix="-Edit")
+    old_idx = build_index(folder1)
+    new_idx = build_index(folder2)
 
     matched       = sorted(set(old_idx) & set(new_idx), key=lambda x: int(x))
     unmatched_old = set(old_idx) - set(new_idx)
     unmatched_new = set(new_idx) - set(old_idx)
 
-    print(f"\n  Matched pairs : {len(matched)}")
+    print(f"\n  Folder 1      : {folder1}")
+    print(f"  Folder 2      : {folder2}")
+    print(f"  Matched pairs : {len(matched)}")
     if unmatched_old:
-        print(f"  Old-only      : {sorted(unmatched_old, key=int)} (skipped)")
+        print(f"  Folder1-only  : {sorted(unmatched_old, key=int)} (skipped)")
     if unmatched_new:
-        print(f"  New-only      : {sorted(unmatched_new, key=int)} (skipped)")
+        print(f"  Folder2-only  : {sorted(unmatched_new, key=int)} (skipped)")
     print()
 
     old_acc = {k: [] for k in ("spread", "clip_lo", "clip_hi", "tenengrad", "laplacian")}
@@ -126,10 +129,12 @@ def main():
             print(f"  ERR #{num:>2}  {e}")
 
     if not old_acc["spread"]:
-        print("\nNo pairs processed. Check paths.")
+        print("\nNo pairs processed. Check folder paths and file naming.")
         return
 
-    def avg(lst):  return round(float(np.mean(lst)), 4)
+    def avg(lst):
+        return round(float(np.mean(lst)), 4)
+
     def pct(o, n):
         a = avg(o)
         return f"{((avg(n) - a) / a * 100):+.1f}%" if a != 0 else "N/A"
@@ -143,7 +148,7 @@ def main():
     ]
 
     print("\n" + "=" * 62)
-    print(f"  {'METRIC':<24} {'OLD':>9} {'NEW':>9} {'DELTA':>9} {'CHANGE':>8}")
+    print(f"  {'METRIC':<24} {'FOLDER1':>9} {'FOLDER2':>9} {'DELTA':>9} {'CHANGE':>8}")
     print("-" * 62)
 
     summary_rows = []
@@ -153,7 +158,7 @@ def main():
         d  = round(n - o, 4)
         pc = pct(old_acc[key], new_acc[key])
         print(f"  {label:<24} {o:>9.4f} {n:>9.4f} {d:>+9.4f} {pc:>8}")
-        summary_rows.append({"metric": label, "old_avg": o, "new_avg": n,
+        summary_rows.append({"metric": label, "folder1_avg": o, "folder2_avg": n,
                               "delta": d, "pct_change": pc})
 
     print("=" * 62)
@@ -164,9 +169,9 @@ def main():
 
     os.makedirs(LOG_DIR, exist_ok=True)
     ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_path = os.path.join(LOG_DIR, f"iwrs_qc_compare_{ts}.csv")
+    csv_path = os.path.join(LOG_DIR, f"paired_compare_{ts}.csv")
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["metric", "old_avg", "new_avg",
+        w = csv.DictWriter(f, fieldnames=["metric", "folder1_avg", "folder2_avg",
                                           "delta", "pct_change"])
         w.writeheader()
         w.writerows(summary_rows)

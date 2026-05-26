@@ -1,3 +1,13 @@
+"""
+suite_color.py
+Color analysis suite combining colorfulness (Hasler & Suesstrunk),
+tonal distribution (histogram clipping), and color accuracy with
+white balance correction (Gray World algorithm + Delta E CIEDE2000).
+
+Usage: py suite_color.py <image_path>
+"""
+
+import sys
 import cv2
 import numpy as np
 from PIL import Image
@@ -5,13 +15,13 @@ import matplotlib.pyplot as plt
 from colormath.color_conversions import convert_color
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie2000
-from image_utils import get_qc_image_path
+
 
 def calculate_colorfulness_metric(image_path):
-    print("\n=== 🎨 Colorfulness Metric ===")
+    print("\n=== Colorfulness Metric ===")
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     if image is None:
-        print(f"❌ Error: Image not found at path: {image_path}")
+        print(f"Error: Image not found at path: {image_path}")
         return
 
     (B, G, R) = cv2.split(image.astype("float32"))
@@ -24,15 +34,16 @@ def calculate_colorfulness_metric(image_path):
     colorfulness = np.sqrt((std_rg ** 2) + (std_yb ** 2)) + 0.3 * np.sqrt((mean_rg ** 2) + (mean_yb ** 2))
     print(f"Colorfulness Score: {colorfulness:.2f}")
 
+
 def analyze_tonal_distribution(image_path):
-    print("\n=== 🌗 Tonal Distribution Analysis ===")
+    print("\n=== Tonal Distribution Analysis ===")
     try:
         img = Image.open(image_path)
         gray_img = img.convert('L')
         img_array = np.array(gray_img)
         total_pixels = img_array.size
         if total_pixels == 0:
-            print("❌ Error: The image has no pixels.")
+            print("Error: The image has no pixels.")
             return
 
         histogram, bins = np.histogram(img_array, bins=256, range=[0, 255])
@@ -56,12 +67,13 @@ def analyze_tonal_distribution(image_path):
         plt.show()
 
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found.")
+        print(f"Error: The file '{image_path}' was not found.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"An error occurred: {e}")
+
 
 def analyze_color_accuracy_and_white_balance(image_path):
-    print("\n=== 🎯 Color Accuracy and White Balance Analysis ===")
+    print("\n=== Color Accuracy and White Balance Analysis ===")
     try:
         original_img = Image.open(image_path)
         img_array = np.array(original_img).astype('float32')
@@ -88,34 +100,35 @@ def analyze_color_accuracy_and_white_balance(image_path):
         combined_img.paste(original_img, (0, 0))
         combined_img.paste(wb_img, (width, 0))
         combined_img.show(title="Original (Left) vs. White Balanced (Right)")
-        print("✅ White-balanced image preview generated. Please close the window to continue.")
+        print("White-balanced preview generated. Close the window to continue.")
 
         original_avg_srgb = sRGBColor(r_avg / 255, g_avg / 255, b_avg / 255)
         original_avg_lab = convert_color(original_avg_srgb, LabColor)
         white_ref_lab = LabColor(lab_l=100.0, lab_a=0.0, lab_b=0.0)
         delta_e = delta_e_cie2000(original_avg_lab, white_ref_lab)
 
-        print(f"Average RGB       : R:{r_avg:.2f}, G:{g_avg:.2f}, B:{b_avg:.2f}")
+        print(f"Average RGB        : R:{r_avg:.2f}, G:{g_avg:.2f}, B:{b_avg:.2f}")
         print(f"Delta E (CIEDE2000): {delta_e:.2f}")
 
         if delta_e <= 1.0:
-            print("Conclusion: The color cast is not perceptible to the human eye. Excellent color accuracy.")
+            print("Conclusion: Color cast not perceptible. Excellent color accuracy.")
         elif delta_e <= 2.0:
-            print("Conclusion: The color cast is perceptible with close observation. Very good color accuracy.")
+            print("Conclusion: Color cast perceptible with close observation. Very good color accuracy.")
         else:
-            print("Conclusion: A significant color cast is present. Color accuracy is low.")
+            print("Conclusion: Significant color cast present. Color accuracy is low.")
 
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found.")
+        print(f"Error: The file '{image_path}' was not found.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
-    try:
-        image_path = get_qc_image_path()
-        calculate_colorfulness_metric(image_path)
-        analyze_tonal_distribution(image_path)
-        analyze_color_accuracy_and_white_balance(image_path)
-    except (FileNotFoundError, ValueError) as e:
-        print(f"Error: {e}")
-        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")
+    if len(sys.argv) < 2:
+        print("Usage: py suite_color.py <image_path>")
+        sys.exit(1)
+
+    image_path = sys.argv[1]
+    calculate_colorfulness_metric(image_path)
+    analyze_tonal_distribution(image_path)
+    analyze_color_accuracy_and_white_balance(image_path)
