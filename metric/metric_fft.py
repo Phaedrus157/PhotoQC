@@ -1,6 +1,16 @@
+"""
+metric_fft.py
+Calculates image sharpness using the Fast Fourier Transform (FFT).
+The metric is the ratio of high-frequency energy to total energy.
+A higher score indicates a sharper image.
+
+Usage: py metric_fft.py <image_path>
+"""
+
 import cv2
 import numpy as np
 import os
+import sys
 
 def calculate_fft_sharpness(image_path):
     """
@@ -49,7 +59,7 @@ def calculate_fft_sharpness(image_path):
     cv2.circle(high_freq_mask, (center_col, center_row), mask_size, 0, -1)
 
     # Extract magnitudes for low and high frequencies
-    np.sum(magnitude_spectrum[low_freq_mask > 0])
+    low_freq_energy = np.sum(magnitude_spectrum[low_freq_mask > 0])
     high_freq_energy = np.sum(magnitude_spectrum[high_freq_mask > 0])
 
     # Calculate the total energy
@@ -64,13 +74,13 @@ def calculate_fft_sharpness(image_path):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
-    image_path = os.path.join(folder_name, file_name)
-
+    if len(sys.argv) < 2:
+        print("Usage: py metric_fft.py <image_path>")
+        sys.exit(1)
+    image_path = sys.argv[1]
     try:
         score = calculate_fft_sharpness(image_path)
-        print(f"FFT Sharpness Score for {file_name}: {score:.6f}")
+        print(f"FFT Sharpness Score for {os.path.basename(image_path)}: {score:.6f}")
     except (FileNotFoundError, ValueError) as e:
         print(e)
     except Exception as e:

@@ -1,8 +1,16 @@
+"""
+metric_blinddecon.py
+Estimates blur using Richardson-Lucy blind deconvolution. A larger score
+indicates more blur; lower scores indicate a sharper image.
+
+Usage: py metric_blinddecon.py <image_path>
+"""
+
 import cv2
 import numpy as np
 from skimage import restoration
 import os
-from image_utils import get_qc_image_path
+import sys
 
 def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
     """
@@ -44,21 +52,17 @@ def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    folder_name = "QCImages"
-    image_path = get_qc_image_path()
-    
-    image_path = os.path.join("/workspaces/PhotoQC", folder_name, file_name)
-
+    if len(sys.argv) < 2:
+        print("Usage: py metric_blinddecon.py <image_path>")
+        sys.exit(1)
+    image_path = sys.argv[1]
     try:
         blur_metric = estimate_blur_with_richardson_lucy(image_path)
-        print(f"🔍 Richardson-Lucy Blur Metric for {file_name}: {blur_metric:.6f}")
-        
-        # Interpretation of the result
-        print("📘 Interpretation:")
-        print("- Lower values (e.g., < 0.005) suggest a sharp image with minimal blur.")
-        print("- Higher values (e.g., > 0.01) may indicate noticeable blur.")
-        print("- This metric is relative; compare across images for best results.")
-
+        print(f"Richardson-Lucy Blur Metric for {os.path.basename(image_path)}: {blur_metric:.6f}")
+        print("Interpretation:")
+        print("  Lower values (< 0.005) suggest a sharp image with minimal blur.")
+        print("  Higher values (> 0.01) may indicate noticeable blur.")
+        print("  This metric is relative; compare across images for best results.")
     except (FileNotFoundError, ValueError) as e:
         print(e)
     except Exception as e:

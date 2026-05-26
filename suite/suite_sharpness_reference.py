@@ -43,33 +43,20 @@ def get_metrics(image_path):
     ]
 
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Usage: py suite_sharpness_reference.py <reference_image> <test_image>")
+        sys.exit(1)
+    ref_path = sys.argv[1]
+    comp_path = sys.argv[2]
+    ref_filename = os.path.basename(ref_path)
+    comp_filename = os.path.basename(comp_path)
     try:
-        folder = "/workspaces/PhotoQC/ImageQC"
-        ref_filename = "QCRef.jpg"
-        ref_path = os.path.join(folder, ref_filename)
-
-        all_files = [f for f in os.listdir(folder) if f.lower().endswith((".jpg", ".jpeg", ".png")) and f != ref_filename]
-
-        if len(all_files) == 0:
-            print("No comparison image found in ImageQC folder.")
-            sys.exit(1)
-        elif len(all_files) > 1:
-            print("Multiple comparison images found. Please keep only one alongside QCRef.jpg.")
-            for f in all_files:
-                print(f" - {f}")
-            sys.exit(1)
-
-        comp_filename = all_files[0]
-        comp_path = os.path.join(folder, comp_filename)
-
         metrics_names = ["Laplacian Value", "Brenner Value", "Tenengrad Value", "Gabor Variance"]
-
         ref_metrics = get_metrics(ref_path)
         comp_metrics = get_metrics(comp_path)
-
-        print(f"{'Metric':<20} {ref_filename:<15} {comp_filename:<15}")
+        print(f"{'Metric':<20} {ref_filename:<20} {comp_filename:<20}")
+        print("-" * 62)
         for name, ref, comp in zip(metrics_names, ref_metrics, comp_metrics):
-            print(f"{name:<20} {ref:<15.4f} {comp:<15.4f}")
+            print(f"{name:<20} {ref:<20.4f} {comp:<20.4f}")
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
-        print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")
