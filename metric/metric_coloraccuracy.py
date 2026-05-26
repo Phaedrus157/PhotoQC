@@ -2,6 +2,8 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 from PIL import Image
 import numpy as np
+if not hasattr(np, 'asscalar'):
+    np.asscalar = lambda a: a.item()
 from colormath.color_conversions import convert_color
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_diff import delta_e_cie2000
@@ -18,7 +20,7 @@ def analyze_color_accuracy_and_white_balance(image_path):
     try:
         # Load the image
         original_img = Image.open(image_path)
-        print(f"✅ Successfully loaded image: {image_path}")
+        print(f"[OK] Successfully loaded image: {image_path}")
         
         # --- White Balance Analysis (Gray World Algorithm) ---
         print("\n--- White Balance Analysis ---")
@@ -55,7 +57,7 @@ def analyze_color_accuracy_and_white_balance(image_path):
         combined_img.paste(wb_img, (width, 0))
         
         combined_img.show(title="Original (Left) vs. White Balanced (Right)")
-        print("✅ White-balanced image preview generated. Please close the window to continue.")
+        print("[OK] White-balanced image preview generated. Please close the window to continue.")
 
         # --- Delta E Color Accuracy Analysis ---
         print("\n--- Color Accuracy Analysis (Delta E) ---")
@@ -72,7 +74,7 @@ def analyze_color_accuracy_and_white_balance(image_path):
 
         print(f"Original image's average color: R:{r_avg:.2f}, G:{g_avg:.2f}, B:{b_avg:.2f}")
         print(f"Target white reference (CIELAB): L:{white_ref_lab.lab_l}, a:{white_ref_lab.lab_a}, b:{white_ref_lab.lab_b}")
-        print(f"🎨 Delta E (CIEDE2000) of average color against white: {delta_e:.2f}")
+        print(f"[COLOR] Delta E (CIEDE2000) of average color against white: {delta_e:.2f}")
 
         # Interpretation of Delta E values
         if delta_e <= 1.0:
@@ -83,9 +85,9 @@ def analyze_color_accuracy_and_white_balance(image_path):
             print("Conclusion: A significant color cast is present. Color accuracy is low.")
 
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
+        print(f"[ERROR] Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"[ERROR] An error occurred: {e}")
 
 if __name__ == "__main__":
     try:

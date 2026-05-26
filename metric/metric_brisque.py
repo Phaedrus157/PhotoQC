@@ -1,6 +1,8 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import numpy as np
+if not hasattr(np, 'asscalar'):
+    np.asscalar = lambda a: a.item()
 from PIL import Image
 from brisque import BRISQUE
 from image_utils import get_qc_image_path
@@ -24,8 +26,8 @@ def calculate_brisque_score(image_path):
         score = scorer.score(img_array)
 
         # Output section: print score and interpretation
-        print(f"📉 BRISQUE Score: {score:.2f}")
-        print("🔍 Interpretation:")
+        print(f"[SCORE] BRISQUE Score: {score:.2f}")
+        print("[INFO] Interpretation:")
         print(" - Lower score = higher perceptual quality (sharper, less distorted)")
         print(" - Higher score = lower quality (more blur, noise, or artifacts)")
         print(" - Use scores to compare relative quality across images")
@@ -33,7 +35,7 @@ def calculate_brisque_score(image_path):
         return score
 
     except Exception as e:
-        print(f"❌ Error calculating BRISQUE score: {e}")
+        print(f"[ERROR] Error calculating BRISQUE score: {e}")
         return None
 
 if __name__ == "__main__":
