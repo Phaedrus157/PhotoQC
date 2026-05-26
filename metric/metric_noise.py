@@ -70,9 +70,9 @@ def analyze_noise(image_path: str):
             print("Luminance and chrominance noise levels are balanced.")
         
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
+        print(f"[ERROR] Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"[ERROR] An error occurred: {e}")
 
 if __name__ == "__main__":
     try:

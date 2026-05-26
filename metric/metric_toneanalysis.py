@@ -16,7 +16,7 @@ def analyze_tonal_distribution(image_path):
     try:
         # Open the image using Pillow
         img = Image.open(image_path)
-        print(f"✅ Successfully loaded image: {image_path}")
+        print(f"[OK] Successfully loaded image: {image_path}")
 
         # Convert the image to grayscale for luminance analysis
         gray_img = img.convert('L')
@@ -25,7 +25,7 @@ def analyze_tonal_distribution(image_path):
         # Get total number of pixels in the image
         total_pixels = img_array.size
         if total_pixels == 0:
-            print("❌ Error: The image has no pixels.")
+            print("[ERROR] Error: The image has no pixels.")
             return
 
         # Calculate the histogram of the grayscale image
@@ -60,9 +60,9 @@ def analyze_tonal_distribution(image_path):
         plt.show()
         
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
+        print(f"[ERROR] Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"[ERROR] An error occurred: {e}")
 
 if __name__ == "__main__":
     try:

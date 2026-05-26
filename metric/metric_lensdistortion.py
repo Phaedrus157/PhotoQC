@@ -17,7 +17,7 @@ def analyze_lens_distortion(image_path):
         if img is None:
             raise FileNotFoundError(f"File not found or unable to read: {image_path}")
 
-        print(f"✅ Successfully loaded image: {image_path}")
+        print(f"[OK] Successfully loaded image: {image_path}")
         print("\n--- Lens Distortion Analysis ---")
 
         # Use Canny edge detection to find edges
@@ -28,7 +28,7 @@ def analyze_lens_distortion(image_path):
         lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, minLineLength=100, maxLineGap=10)
 
         if lines is None:
-            print("❌ No significant straight lines found to analyze distortion.")
+            print("[ERROR] No significant straight lines found to analyze distortion.")
             return
 
         # Initialize variables for distortion calculation
@@ -75,7 +75,7 @@ def analyze_lens_distortion(image_path):
             distortion_scores.append(distance * distortion_type)
         
         if not distortion_scores:
-            print("❌ No distortion metric could be calculated from the detected lines.")
+            print("[ERROR] No distortion metric could be calculated from the detected lines.")
             return
 
         # Calculate the average distortion score
@@ -94,9 +94,9 @@ def analyze_lens_distortion(image_path):
             print("Conclusion: Minimal lens distortion detected. Lines are straight.")
 
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
+        print(f"[ERROR] Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"[ERROR] An error occurred: {e}")
 
 if __name__ == "__main__":
     try:

@@ -17,7 +17,7 @@ def analyze_vignetting(image_path):
         img = Image.open(image_path).convert('L')
         img_array = np.array(img).astype(np.float32)
 
-        print(f"✅ Successfully loaded image: {image_path}")
+        print(f"[OK] Successfully loaded image: {image_path}")
         print("\n--- Vignetting Analysis ---")
 
         height, width = img_array.shape
@@ -67,9 +67,9 @@ def analyze_vignetting(image_path):
             print("Conclusion: Minimal to no vignetting detected.")
 
     except FileNotFoundError:
-        print(f"❌ Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
+        print(f"[ERROR] Error: The file '{image_path}' was not found. Please ensure it is located at '{image_path}'.")
     except Exception as e:
-        print(f"❌ An error occurred: {e}")
+        print(f"[ERROR] An error occurred: {e}")
 
 if __name__ == "__main__":
     try:
