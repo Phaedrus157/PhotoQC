@@ -17,8 +17,8 @@ def detect_color_cast(image_path):
     deviation = mean_colors - gray_level
     cast_strength = np.linalg.norm(deviation)
 
-    print(f"🎨 Mean RGB: {mean_colors}")
-    print(f"⚖️ Color Cast Strength: {cast_strength:.2f}")
+    print(f"[COLOR] Mean RGB: {mean_colors}")
+    print(f"[BALANCE] Color Cast Strength: {cast_strength:.2f}")
     return cast_strength
 
 if __name__ == "__main__":

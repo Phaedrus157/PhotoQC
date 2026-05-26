@@ -44,8 +44,8 @@ if __name__ == "__main__":
         edge_count_score = count_canny_edges(img_path)
 
         # Output section: print score and interpretation
-        print(f"🧮 Canny Edge Count for {file_name}: {edge_count_score}")
-        print("🔍 Interpretation:")
+        print(f"[COUNT] Canny Edge Count for {file_name}: {edge_count_score}")
+        print("[INFO] Interpretation:")
         print(" - Higher edge count = more detail or sharpness")
         print(" - Lower edge count = smoother or blurrier image")
         print(" - Use this metric to compare sharpness across images")

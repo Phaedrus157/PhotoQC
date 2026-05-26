@@ -15,7 +15,7 @@ def calculate_niqe_score(image_path):
 
         niqe = pyiqa.create_metric('niqe')
         score = niqe(img_tensor)
-        print(f"📉 NIQE Score (pyiqa): {score.item():.2f}")
+        print(f"[SCORE] NIQE Score (pyiqa): {score.item():.2f}")
         return score.item()
     except Exception as e:
         print(f"Error calculating NIQE: {e}")

@@ -43,6 +43,6 @@ if __name__ == "__main__":
     image_path = get_qc_image_path()
     try:
         score = compute_local_variance(image_path)
-        print(f"Local Variance Score for QCRef2.jpg: {score:.2f}")
+        print(f"Local Variance Score for {os.path.basename(image_path)}: {score:.2f}")
     except ValueError as e:
         print(e)

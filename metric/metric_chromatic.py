@@ -24,7 +24,7 @@ def analyze_chromatic_aberration(image_path):
         if img is None:
             raise FileNotFoundError(f"File not found or unable to read: {image_path}")
 
-        print(f"✅ Successfully loaded image: {image_path}")
+        print(f"[OK] Successfully loaded image: {image_path}")
         print("\n--- Chromatic Aberration Analysis ---")
 
         # Convert to grayscale for edge detection
@@ -65,12 +65,12 @@ def analyze_chromatic_aberration(image_path):
         overall_score = (score_r + score_b) / 2
 
         # --- Output Section ---
-        print(f"🔴 Red Channel Shift (pixels): {best_r_shift}")
-        print(f"🔵 Blue Channel Shift (pixels): {best_b_shift}")
-        print(f"📊 Overall Chromatic Aberration Score: {overall_score:.4f}%")
+        print(f"[RED] Red Channel Shift (pixels): {best_r_shift}")
+        print(f"[BLUE] Blue Channel Shift (pixels): {best_b_shift}")
+        print(f"[STATS] Overall Chromatic Aberration Score: {overall_score:.4f}%")
 
         # --- Interpretation ---
-        print("🔍 Interpretation:")
+        print("[INFO] Interpretation:")
         if overall_score < 0.01:
             print(" - Very low chromatic aberration. Excellent lens performance.")
         elif overall_score < 0.05:

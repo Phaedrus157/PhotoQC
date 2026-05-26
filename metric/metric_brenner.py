@@ -40,10 +40,10 @@ if __name__ == "__main__":
         img_path = get_qc_image_path()
         
         sharpness = calculate_brenner_sharpness(img_path)
-        print(f"📏 Brenner Sharpness Metric for {os.path.basename(img_path)}: {sharpness:.2f}")
+        print(f"[MEASURE] Brenner Sharpness Metric for {os.path.basename(img_path)}: {sharpness:.2f}")
 
         # Interpretation of the result
-        print("📘 Interpretation:")
+        print("[INFO] Interpretation:")
         print("- Higher values indicate more edge contrast and sharper images.")
         print("- Lower values suggest reduced detail or blur.")
         print("- This metric is relative; compare across images for best results.")
