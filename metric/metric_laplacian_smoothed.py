@@ -2,13 +2,11 @@
 metric_laplacian_smoothed.py
 Calculates image sharpness using variance of the Laplacian with
 Gaussian pre-smoothing to reduce noise sensitivity.
-
-Usage: py metric_laplacian_smoothed.py <image_path>
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
-import os
-import sys
 
 def calculate_laplacian_sharpness(image_path, kernel_size=(5, 5), sigma=0):
     """
@@ -41,12 +39,11 @@ def calculate_laplacian_sharpness(image_path, kernel_size=(5, 5), sigma=0):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py metric_laplacian_smoothed.py <image_path>")
-        sys.exit(1)
-    image_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+
     try:
-        sharpness_score = calculate_laplacian_sharpness(image_path)
-        print(f"Laplacian sharpness score (with Gaussian smoothing) for {os.path.basename(image_path)}: {sharpness_score:.2f}")
+        sharpness_score = calculate_laplacian_sharpness(img_path)
+        print(f"Laplacian sharpness score (with Gaussian smoothing) for {os.path.basename(img_path)}: {sharpness_score:.2f}")
     except Exception as e:
         print(f"Error: {e}")

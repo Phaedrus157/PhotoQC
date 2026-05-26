@@ -1,6 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
-import os
-import sys
 
 def calculate_laplacian_sharpness(image_path):
     """
@@ -26,27 +26,23 @@ def calculate_laplacian_sharpness(image_path):
 
     # Load the image in grayscale
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    
+
     # If the image failed to load, return an error
     if image is None:
         raise ValueError("Error: Could not load the image. Check file integrity.")
 
     # Apply the Laplacian filter and calculate the variance
-    # cv2.CV_64F is used for high precision to avoid data loss
     laplacian_var = cv2.Laplacian(image, cv2.CV_64F).var()
 
     return laplacian_var
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py metric_laplacian.py <image_path>")
-        sys.exit(1)
-
-    image_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
 
     try:
-        sharpness_score = calculate_laplacian_sharpness(image_path)
-        print(f"Laplacian sharpness score for {os.path.basename(image_path)}: {sharpness_score:.2f}")
+        sharpness_score = calculate_laplacian_sharpness(img_path)
+        print(f"Laplacian sharpness score for {os.path.basename(img_path)}: {sharpness_score:.2f}")
 
         if sharpness_score < 100:
             print("Interpretation: Blurry — likely reject")

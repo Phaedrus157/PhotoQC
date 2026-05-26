@@ -13,7 +13,7 @@ def get_qc_image_path():
         FileNotFoundError: If QCImages folder doesn't exist
         ValueError: If no valid image files are found in QCImages folder
     """
-    qc_folder = "QCImages"
+    qc_folder = r"C:\TEMP\QCImages"
     
     # Check if QCImages folder exists
     if not os.path.exists(qc_folder):

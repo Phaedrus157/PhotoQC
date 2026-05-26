@@ -1,16 +1,15 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 # wavelet_sharpness.py
 #
-# This script calculates the sharpness of images in the 'QCImages' folder
-# using a wavelet-based method. The method measures the energy of the
-# high-frequency detail coefficients, with higher energy indicating sharper details.
+# Calculates image sharpness using a wavelet-based method. Measures the energy
+# of the high-frequency detail coefficients; higher energy indicates sharper details.
 #
 # You may need to install the PyWavelets library: pip install PyWavelets
 
 import cv2
 import numpy as np
 import pywt
-import os
-import glob
 
 def calculate_wavelet_sharpness(image_path):
     """
@@ -22,7 +21,7 @@ def calculate_wavelet_sharpness(image_path):
 
     Returns:
         float: The calculated sharpness score. A higher value indicates a sharper image.
-    
+
     Raises:
         FileNotFoundError: If the specified image file does not exist.
         ImportError: If the pywt library is not installed.
@@ -30,19 +29,16 @@ def calculate_wavelet_sharpness(image_path):
     try:
         image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
         if image is None:
-            # Check if the file exists at all to provide a more specific error
             if not os.path.exists(image_path):
                 raise FileNotFoundError(f"Image not found at path: {image_path}")
             else:
-                # If the file exists but cv2 can't read it, it might be corrupted or a non-image file
                 print(f"Warning: Could not read image file {os.path.basename(image_path)}. Skipping.")
                 return None
 
         # Convert image to float32 for wavelet transform
         image_float = np.float32(image)
 
-        # Perform 2D discrete wavelet transform on the image
-        # 'db1' is the Daubechies wavelet of order 1.
+        # Perform 2D discrete wavelet transform ('db1' = Daubechies order 1)
         coeffs = pywt.dwt2(image_float, 'db1')
         cA, (cH, cV, cD) = coeffs
 
@@ -59,21 +55,11 @@ def calculate_wavelet_sharpness(image_path):
         return None
 
 if __name__ == "__main__":
-    # Define the directory where your images are located
-    image_directory = "QCImages"
-    
-    # Get a list of all image files (jpg and png) in the specified directory
-    image_files = glob.glob(os.path.join(image_directory, "*.jpg")) + glob.glob(os.path.join(image_directory, "*.png"))
-    
-    if not image_files:
-        print(f"No image files found in the '{image_directory}' directory.")
-    else:
-        print(f"Found {len(image_files)} image(s) to analyze.")
-        print("---")
-        for img_path in image_files:
-            file_name = os.path.basename(img_path)
-            sharpness_score = calculate_wavelet_sharpness(img_path)
-            if sharpness_score is not None:
-                print(f"Image: {file_name}")
-                print(f"  Wavelet Sharpness Score = {sharpness_score:.2f}")
-                print("---")
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+    file_name = os.path.basename(img_path)
+
+    sharpness_score = calculate_wavelet_sharpness(img_path)
+    if sharpness_score is not None:
+        print(f"Image: {file_name}")
+        print(f"  Wavelet Sharpness Score = {sharpness_score:.2f}")

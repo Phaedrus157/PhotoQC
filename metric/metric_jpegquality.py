@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 # jpeg_quality_estimator.py
 
 from PIL import Image

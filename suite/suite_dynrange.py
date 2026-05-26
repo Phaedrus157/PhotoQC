@@ -2,14 +2,12 @@
 suite_dynrange.py
 Dynamic range analysis suite combining luminance standard deviation
 and pixel intensity range metrics.
-
-Usage: py suite_dynrange.py <image_path>
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
-import sys
 
 
 def calculate_luminance_std_dev(image_path):
@@ -62,11 +60,8 @@ def calculate_pixel_intensity_range(image_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py suite_dynrange.py <image_path>")
-        sys.exit(1)
-
-    img_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
     file_name = os.path.basename(img_path)
 
     try:

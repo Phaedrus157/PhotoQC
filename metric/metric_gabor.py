@@ -2,14 +2,12 @@
 metric_gabor.py
 Calculates image sharpness/texture using Gabor filter variance.
 Higher variance indicates more texture/detail in the image.
-
-Usage: py metric_gabor.py <image_path>
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
-import sys
 
 def calculate_gabor_variance(image_path, ksize=31, sigma=4.0, theta=0, lambd=10.0, gamma=0.5, psi=0):
     # Load image in grayscale
@@ -27,10 +25,9 @@ def calculate_gabor_variance(image_path, ksize=31, sigma=4.0, theta=0, lambd=10.
     return variance
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py metric_gabor.py <image_path>")
-        sys.exit(1)
-    img_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+
     try:
         gabor_variance = calculate_gabor_variance(img_path)
         print(f"Gabor filter variance metric for {os.path.basename(img_path)}: {gabor_variance:.4f}")

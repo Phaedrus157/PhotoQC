@@ -2,15 +2,13 @@
 metric_blinddecon.py
 Estimates blur using Richardson-Lucy blind deconvolution. A larger score
 indicates more blur; lower scores indicate a sharper image.
-
-Usage: py metric_blinddecon.py <image_path>
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
 from skimage import restoration
-import os
-import sys
 
 def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
     """
@@ -26,7 +24,6 @@ def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
     Returns:
         float: A metric for blur, based on the difference between original and deblurred image.
     """
-    
     # Check if the image file exists
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"Error: The image file was not found at {image_path}")
@@ -44,21 +41,20 @@ def estimate_blur_with_richardson_lucy(image_path, num_iter=30, psf_size=11):
 
     # Apply Richardson-Lucy deconvolution to estimate deblurred image
     deconvolved_image = restoration.richardson_lucy(image, psf, num_iter=num_iter)
-    
+
     # Calculate blur metric: mean squared error between original and deblurred image
     blur_metric = np.mean((image - deconvolved_image) ** 2)
-    
+
     return blur_metric
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py metric_blinddecon.py <image_path>")
-        sys.exit(1)
-    image_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+
     try:
-        blur_metric = estimate_blur_with_richardson_lucy(image_path)
-        print(f"Richardson-Lucy Blur Metric for {os.path.basename(image_path)}: {blur_metric:.6f}")
+        blur_metric = estimate_blur_with_richardson_lucy(img_path)
+        print(f"Richardson-Lucy Blur Metric for {os.path.basename(img_path)}: {blur_metric:.6f}")
         print("Interpretation:")
         print("  Lower values (< 0.005) suggest a sharp image with minimal blur.")
         print("  Higher values (> 0.01) may indicate noticeable blur.")

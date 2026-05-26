@@ -1,3 +1,5 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 # color_cast_detector.py
 
 import cv2

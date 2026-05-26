@@ -5,13 +5,14 @@ delta table. Metrics: Laplacian sharpness, Tenengrad sharpness, luminance
 noise, dynamic range, shadow clipping, highlight clipping, SSIM, PSNR.
 A log file is saved to the Logs directory.
 
-Usage: py suite_tif_vs_dng.py <ref_path> <compare_path>
+Loads the first two images found in C:\TEMP\QCImages as ref and compare.
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
+import glob
 import numpy as np
-import os
-import sys
 from datetime import datetime
 from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import peak_signal_noise_ratio as psnr
@@ -104,12 +105,17 @@ def winner(ref_val, new_val, higher_is_better=True):
 
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: py suite_tif_vs_dng.py <ref_path> <compare_path>")
+    _qc_dir = r"C:\TEMP\QCImages"
+    _exts = ['*.tif', '*.tiff', '*.png', '*.jpg', '*.jpeg']
+    _found = []
+    for _ext in _exts:
+        _found.extend(glob.glob(os.path.join(_qc_dir, _ext)))
+    if len(_found) < 2:
+        print(f"Error: Need at least 2 images in {_qc_dir}")
         sys.exit(1)
+    ref_path = _found[0]
+    new_path = _found[1]
 
-    ref_path = sys.argv[1]
-    new_path = sys.argv[2]
     log_file = os.path.join(LOG_DIR, f"tif_compare_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
 
     print("\nLoading images...")

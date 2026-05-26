@@ -1,6 +1,7 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
 
 def calculate_sobel_edge_intensity(image_path):
     """
@@ -33,13 +34,11 @@ def calculate_sobel_edge_intensity(image_path):
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
-    
-    image_path = os.path.join(folder_name, file_name)
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
 
     try:
-        intensity_score = calculate_sobel_edge_intensity(image_path)
-        print(f"Sobel Edge Intensity Score for {file_name}: {intensity_score:.2f}")
+        intensity_score = calculate_sobel_edge_intensity(img_path)
+        print(f"Sobel Edge Intensity Score for {os.path.basename(img_path)}: {intensity_score:.2f}")
     except (FileNotFoundError, ValueError) as e:
         print(e)

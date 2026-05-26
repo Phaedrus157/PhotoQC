@@ -1,7 +1,7 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
-import glob
 
 def calculate_colorfulness_metric(image_path):
     """
@@ -36,26 +36,17 @@ def calculate_colorfulness_metric(image_path):
 
     # Combine the standard deviations and means to calculate the colorfulness score
     colorfulness = np.sqrt((std_rg ** 2) + (std_yb ** 2)) + 0.3 * np.sqrt((mean_rg ** 2) + (mean_yb ** 2))
-    
+
     return colorfulness
 
 if __name__ == "__main__":
-    image_directory = "QCImages"
-    image_files = glob.glob(os.path.join(image_directory, "*.jpg")) + glob.glob(os.path.join(image_directory, "*.png"))
-    
-    if not image_files:
-        print(f"No image files found in the '{image_directory}' directory.")
-    else:
-        print(f"Found {len(image_files)} image(s) to analyze.")
-        print("---")
-        for img_path in image_files:
-            file_name = os.path.basename(img_path)
-            
-            try:
-                colorfulness_score = calculate_colorfulness_metric(img_path)
-                
-                print(f"Image: {file_name}")
-                print(f"  Colorfulness Score = {colorfulness_score:.2f}")
-                print("---")
-            except Exception as e:
-                print(f"An error occurred while processing {file_name}: {e}")
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+    file_name = os.path.basename(img_path)
+
+    try:
+        colorfulness_score = calculate_colorfulness_metric(img_path)
+        print(f"Image: {file_name}")
+        print(f"  Colorfulness Score = {colorfulness_score:.2f}")
+    except Exception as e:
+        print(f"An error occurred while processing {file_name}: {e}")

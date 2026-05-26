@@ -10,16 +10,16 @@ Metrics (averaged across all matched pairs):
 
 Output: averaged console summary + CSV log
 
-Usage: py suite_paired_compare.py <folder1> <folder2>
+Folders: C:\TEMP\QCImages\A  and  C:\TEMP\QCImages\B
 
 Note: OpenCV 4.12.0 AVX2 rejects float32->CV_64F for Sobel/Laplacian;
 uint8 input is used for those filter calls.
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
-import sys
 import csv
 from datetime import datetime
 from pathlib import Path
@@ -85,12 +85,8 @@ def build_index(folder: str) -> dict:
 
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: py suite_paired_compare.py <folder1> <folder2>")
-        sys.exit(1)
-
-    folder1 = sys.argv[1]
-    folder2 = sys.argv[2]
+    folder1 = r"C:\TEMP\QCImages\A"
+    folder2 = r"C:\TEMP\QCImages\B"
 
     print("=" * 62)
     print("  Paired QC Comparison")

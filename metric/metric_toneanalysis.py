@@ -1,4 +1,5 @@
-import sys
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt

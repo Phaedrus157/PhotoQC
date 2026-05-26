@@ -3,14 +3,12 @@ metric_fft.py
 Calculates image sharpness using the Fast Fourier Transform (FFT).
 The metric is the ratio of high-frequency energy to total energy.
 A higher score indicates a sharper image.
-
-Usage: py metric_fft.py <image_path>
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
-import sys
 
 def calculate_fft_sharpness(image_path):
     """
@@ -38,22 +36,22 @@ def calculate_fft_sharpness(image_path):
 
     # Perform the 2D FFT
     dft = cv2.dft(image_float, flags=cv2.DFT_COMPLEX_OUTPUT)
-    
+
     # Shift the zero-frequency component to the center of the spectrum
     dft_shift = np.fft.fftshift(dft)
 
     # Calculate the magnitude spectrum
-    magnitude_spectrum = 20 * np.log(cv2.magnitude(dft_shift[:,:,0], dft_shift[:,:,1]))
+    magnitude_spectrum = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1]))
 
     # Define the center and create masks for low and high frequencies
     rows, cols = image.shape
     center_row, center_col = rows // 2, cols // 2
-    
-    # Create a low-frequency mask (e.g., a circle in the center)
+
+    # Create a low-frequency mask (a circle in the center)
     mask_size = 30
     low_freq_mask = np.zeros((rows, cols), dtype=np.uint8)
     cv2.circle(low_freq_mask, (center_col, center_row), mask_size, 255, -1)
-    
+
     # Create a high-frequency mask (everything but the center)
     high_freq_mask = np.ones((rows, cols), dtype=np.uint8) * 255
     cv2.circle(high_freq_mask, (center_col, center_row), mask_size, 0, -1)
@@ -62,25 +60,22 @@ def calculate_fft_sharpness(image_path):
     low_freq_energy = np.sum(magnitude_spectrum[low_freq_mask > 0])
     high_freq_energy = np.sum(magnitude_spectrum[high_freq_mask > 0])
 
-    # Calculate the total energy
-    total_energy = np.sum(magnitude_spectrum)
-
     # The metric is the ratio of high-frequency energy to total energy
+    total_energy = np.sum(magnitude_spectrum)
     if total_energy == 0:
         return 0
     fft_sharpness_score = high_freq_energy / total_energy
-    
+
     return fft_sharpness_score
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py metric_fft.py <image_path>")
-        sys.exit(1)
-    image_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+
     try:
-        score = calculate_fft_sharpness(image_path)
-        print(f"FFT Sharpness Score for {os.path.basename(image_path)}: {score:.6f}")
+        score = calculate_fft_sharpness(img_path)
+        print(f"FFT Sharpness Score for {os.path.basename(img_path)}: {score:.6f}")
     except (FileNotFoundError, ValueError) as e:
         print(e)
     except Exception as e:

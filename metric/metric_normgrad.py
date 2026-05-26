@@ -1,6 +1,7 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
 
 def calculate_normalized_average_gradient(image_path):
     """
@@ -27,36 +28,26 @@ def calculate_normalized_average_gradient(image_path):
     image = image.astype(np.float32)
 
     # Calculate horizontal and vertical gradients using the Sobel operator
-    # The gradients show the rate of change of pixel intensity.
     grad_x = cv2.Sobel(image, cv2.CV_32F, 1, 0, ksize=3)
     grad_y = cv2.Sobel(image, cv2.CV_32F, 0, 1, ksize=3)
 
     # Calculate the gradient magnitude (total edge strength at each pixel)
-    # This is the Euclidean norm of the gradient vector at each pixel
     grad_magnitude = np.sqrt(grad_x**2 + grad_y**2)
 
-    # Calculate the average of the gradient magnitudes
+    # Normalize by maximum possible value to scale 0-1
     average_gradient = np.mean(grad_magnitude)
-
-    # Normalize the score by dividing by the maximum possible value (255 * sqrt(2))
-    # This scales the score to a range of 0 to 1, making it easier to compare
-    # images of different bit depths.
     normalized_average_gradient = average_gradient / (255 * np.sqrt(2))
 
     return normalized_average_gradient
 
 # --- Main part of the script ---
 if __name__ == "__main__":
-    # Define the image file name and its folder
-    folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
-    
-    # Construct the full image path
-    image_path = os.path.join(folder_name, file_name)
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
 
     try:
-        score = calculate_normalized_average_gradient(image_path)
-        print(f"Normalized Average Gradient for {file_name}: {score:.6f}")
+        score = calculate_normalized_average_gradient(img_path)
+        print(f"Normalized Average Gradient for {os.path.basename(img_path)}: {score:.6f}")
 
     except (FileNotFoundError, ValueError) as e:
         print(e)

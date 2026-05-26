@@ -2,14 +2,12 @@
 metric_tenengrad.py
 Calculates image sharpness using the Tenengrad method (sum of squared
 Sobel gradient magnitudes). Higher scores indicate sharper images.
-
-Usage: py metric_tenengrad.py <image_path>
 """
 
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
-import os
-import sys
 
 def calculate_tenengrad_sharpness(image_path):
     # Load image in grayscale
@@ -28,10 +26,9 @@ def calculate_tenengrad_sharpness(image_path):
     return tenengrad_metric
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py metric_tenengrad.py <image_path>")
-        sys.exit(1)
-    img_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+
     try:
         sharpness = calculate_tenengrad_sharpness(img_path)
         print(f"Tenengrad sharpness metric for {os.path.basename(img_path)}: {sharpness:.4f}")

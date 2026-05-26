@@ -1,5 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
-import os
 
 def count_canny_edges(image_path, threshold1=100, threshold2=200):
     """
@@ -35,12 +36,12 @@ def count_canny_edges(image_path, threshold1=100, threshold2=200):
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    folder_name = "QCImages"
-    file_name = "QCRef2.jpg"
-    image_path = os.path.join(folder_name, file_name)
+    from image_utils import get_qc_image_path
+    img_path = get_qc_image_path()
+    file_name = os.path.basename(img_path)
 
     try:
-        edge_count_score = count_canny_edges(image_path)
+        edge_count_score = count_canny_edges(img_path)
 
         # Output section: print score and interpretation
         print(f"🧮 Canny Edge Count for {file_name}: {edge_count_score}")

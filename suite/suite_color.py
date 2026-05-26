@@ -3,11 +3,10 @@ suite_color.py
 Color analysis suite combining colorfulness (Hasler & Suesstrunk),
 tonal distribution (histogram clipping), and color accuracy with
 white balance correction (Gray World algorithm + Delta E CIEDE2000).
-
-Usage: py suite_color.py <image_path>
 """
 
-import sys
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
 from PIL import Image
@@ -124,11 +123,8 @@ def analyze_color_accuracy_and_white_balance(image_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: py suite_color.py <image_path>")
-        sys.exit(1)
-
-    image_path = sys.argv[1]
+    from image_utils import get_qc_image_path
+    image_path = get_qc_image_path()
     calculate_colorfulness_metric(image_path)
     analyze_tonal_distribution(image_path)
     analyze_color_accuracy_and_white_balance(image_path)

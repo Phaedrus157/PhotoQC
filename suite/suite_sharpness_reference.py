@@ -1,7 +1,8 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
+import glob
 import numpy as np
-import os
-import sys
 
 def calculate_laplacian_sharpness(image_path):
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
@@ -43,11 +44,17 @@ def get_metrics(image_path):
     ]
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: py suite_sharpness_reference.py <reference_image> <test_image>")
+    _qc_dir = r"C:\TEMP\QCImages"
+    _exts = ['*.tif', '*.tiff', '*.png', '*.jpg', '*.jpeg']
+    _found = []
+    for _ext in _exts:
+        _found.extend(glob.glob(os.path.join(_qc_dir, _ext)))
+    if len(_found) < 2:
+        print(f"Error: Need at least 2 images in {_qc_dir}")
         sys.exit(1)
-    ref_path = sys.argv[1]
-    comp_path = sys.argv[2]
+    ref_path = _found[0]
+    comp_path = _found[1]
+
     ref_filename = os.path.basename(ref_path)
     comp_filename = os.path.basename(comp_path)
     try:
