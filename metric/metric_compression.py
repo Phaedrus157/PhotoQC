@@ -62,6 +62,7 @@ if __name__ == "__main__":
     try:
         # Define the fixed image path
         image_file = get_qc_image_path()
-        analyze_compression_artifacts(image_file)    except (FileNotFoundError, ValueError) as e:
+        analyze_compression_artifacts(image_file)
+    except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
         print("Please place a valid image file (TIFF, PNG, or JPEG) in the QCImages folder.")
