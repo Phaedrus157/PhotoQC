@@ -9,6 +9,8 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import cv2
 import numpy as np
+if not hasattr(np, 'asscalar'):
+    np.asscalar = lambda a: a.item()
 from PIL import Image
 import matplotlib.pyplot as plt
 from colormath.color_conversions import convert_color
