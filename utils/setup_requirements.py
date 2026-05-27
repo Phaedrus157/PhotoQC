@@ -33,7 +33,24 @@ def install_packages(packages):
         except subprocess.CalledProcessError:
             print(f"❌ Failed to install {package}.")
 
+def install_pyiqa():
+    try:
+        answer = input("metric_niqe.py requires pyiqa + PyTorch (~2GB). Install now? (y/n): ").strip().lower()
+    except (EOFError, OSError):
+        # Non-interactive environment — default to skip
+        answer = "n"
+    if answer == "y":
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "pyiqa", "--break-system-packages"])
+            print("pyiqa installed successfully.")
+        except subprocess.CalledProcessError:
+            print("Failed to install pyiqa.")
+    else:
+        print("Skipping pyiqa. metric_niqe.py will not run without it.")
+
 if __name__ == "__main__":
     print("Installing required packages for ImageQC...")
     install_packages(required_packages)
-    print("📦 Package installation process completed.")
+    print("Package installation process completed.")
+    print()
+    install_pyiqa()
