@@ -20,8 +20,8 @@ def compare_with_reference(image_path, reference_path):
     ssim_score = ssim(img1_gray, img2_gray)
     psnr_score = psnr(img1_gray, img2_gray)
 
-    print(f"🔍 SSIM: {ssim_score:.4f}")
-    print(f"📶 PSNR: {psnr_score:.2f} dB")
+    print(f"[SSIM] SSIM: {ssim_score:.4f}")
+    print(f"[PSNR] PSNR: {psnr_score:.2f} dB")
     return ssim_score, psnr_score
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ delta table. Metrics: Laplacian sharpness, Tenengrad sharpness, luminance
 noise, dynamic range, shadow clipping, highlight clipping, SSIM, PSNR.
 A log file is saved to the Logs directory.
 
-Loads the first two images found in C:\TEMP\QCImages as ref and compare.
+Loads the first two images found in C:/TEMP/QCImages as ref and compare.
 """
 
 import sys, os
