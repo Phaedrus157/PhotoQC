@@ -10,7 +10,7 @@ Metrics (averaged across all matched pairs):
 
 Output: averaged console summary + CSV log
 
-Folders: C:\TEMP\QCImages\A  and  C:\TEMP\QCImages\B
+Folders: C:/TEMP/QCImages/A  and  C:/TEMP/QCImages/B
 
 Note: OpenCV 4.12.0 AVX2 rejects float32->CV_64F for Sobel/Laplacian;
 uint8 input is used for those filter calls.
@@ -71,16 +71,14 @@ def compute_all(path: Path) -> dict:
     }
 
 
-def numeric_prefix(stem: str) -> str:
-    return stem.split("_")[0]
-
-
 def build_index(folder: str) -> dict:
-    """Returns {numeric_prefix: Path} for all *.tif files in folder root."""
+    """Returns {stem: Path} for all supported image files in folder root. First match wins."""
+    exts = ("*.tif", "*.tiff", "*.jpg", "*.jpeg", "*.png")
     index = {}
-    for f in Path(folder).glob("*.tif"):
-        num = numeric_prefix(f.stem)
-        index[num] = f
+    for ext in exts:
+        for f in Path(folder).glob(ext):
+            if f.stem not in index:
+                index[f.stem] = f
     return index
 
 
@@ -95,7 +93,7 @@ def main():
     old_idx = build_index(folder1)
     new_idx = build_index(folder2)
 
-    matched       = sorted(set(old_idx) & set(new_idx), key=lambda x: int(x))
+    matched       = sorted(set(old_idx) & set(new_idx))
     unmatched_old = set(old_idx) - set(new_idx)
     unmatched_new = set(new_idx) - set(old_idx)
 
@@ -103,9 +101,9 @@ def main():
     print(f"  Folder 2      : {folder2}")
     print(f"  Matched pairs : {len(matched)}")
     if unmatched_old:
-        print(f"  Folder1-only  : {sorted(unmatched_old, key=int)} (skipped)")
+        print(f"  Folder1-only  : {sorted(unmatched_old)} (skipped)")
     if unmatched_new:
-        print(f"  Folder2-only  : {sorted(unmatched_new, key=int)} (skipped)")
+        print(f"  Folder2-only  : {sorted(unmatched_new)} (skipped)")
     print()
 
     old_acc = {k: [] for k in ("spread", "clip_lo", "clip_hi", "tenengrad", "laplacian")}
