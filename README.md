@@ -77,13 +77,26 @@ py suite/suite_sharpness_reference.py <reference_image> <test_image>
 py utils/gaussian_smooth.py <input_image> <output_image>
 ```
 
+## Input Folder
+
+Place test images in: `C:\TEMP\QCImages\`
+Supported formats: TIFF, PNG, JPEG (TIFF preferred)
+
+All `metric/` and `suite/` scripts scan this folder automatically — no CLI arguments required.
+
+For suite scripts comparing two images (`suite_paired_compare`, `suite_sharpness_reference`, `suite_ssim_psnr`, `suite_tif_vs_dng`), place exactly two images in the folder. Scripts pick the first two files found by extension priority: `tif > tiff > png > jpg > jpeg`.
+
+The `QCImages/` folder in the project root is for documentation only — do not place test images there.
+
 ## Dependencies
 
-Core: `opencv-python`, `numpy`, `pillow`, `scikit-image`, `scipy`, `matplotlib`, `colormath`
+Standard install (`pip install -r requirements.txt` or via `setup_requirements.py`):
+- `opencv-python`, `numpy`, `scipy`, `scikit-image`, `Pillow`, `matplotlib`, `colormath`, `brisque`
 
-Optional (metric_niqe.py only): `pyiqa`, `torch`
-
-Install all: `py utils/setup_requirements.py`
+Heavy optional dependency (required for `metric_niqe.py` only):
+- `pyiqa` + PyTorch (~2GB install)
+- Install with: `pip install pyiqa --break-system-packages`
+- On first run, `metric_niqe.py` will download a small model file (~8KB) from HuggingFace
 
 ## Output
 
@@ -92,3 +105,7 @@ Metric scripts print scores to stdout. Suite scripts additionally write timestam
 ```
 C:\Users\Public\Documents\PYProjects\Logs\
 ```
+
+## Logs
+
+Suite scripts that generate logs write to: `C:\Users\Public\Documents\PYProjects\Logs\`
